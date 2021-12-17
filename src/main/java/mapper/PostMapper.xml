@@ -4,32 +4,43 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PostMapper">
 
-<insert id="reg" parameterType="pvo">
-	insert into post (writer, files, content)
-	values(#{writer}, #{files}, #{content})
-</insert>
+	<insert id="reg" parameterType="pvo">
+		insert into post (writer, files, content)
+		values(#{writer}, #{files}, #{content})
+	</insert>
 
-<select id="list" resultType="pvo">
-	select p.post_id, writer, reg_at, mod_at, read_cnt, count(l.email) as like_cnt
-	from post p left join `like` l on p.post_id = l.post_id group by p.post_id
-</select>
+	<select id="list" resultType="pvo">
+		select post.post_id , post.writer ,post.like_cnt ,post.mod_at ,post.read_cnt, post.content  , cmt.cmt_writer cmt_writer, cmt.content cmt_content
+from (
+select p.post_id , p.writer , p.mod_at , p.read_cnt, count(l.email) as like_cnt, p.content
+	from post p left join `like` l on p.post_id = l.post_id 
+	group by p.post_id ) post
+	left join (
+select c.post_id , c.writer cmt_writer, c.content
+from post p  right join comment c 
+on p.post_id = c.post_id
+) cmt
+on post.post_id  = cmt.post_id;
+	</select>
 
-<select id="one" parameterType="long" resultType="pvo">
-	select p.post_id, writer, reg_at, mod_at, read_cnt, files, content, count(l.email) as like_cnt
-	from post p left join `like` l on p.post_id = l.post_id where p.post_id = #{postId} group by p.post_id
-</select>
+	<select id="one" parameterType="long" resultType="pvo">
+		select p.post_id, writer, reg_at, mod_at, read_cnt, files, content,
+		count(l.email) as like_cnt
+		from post p left join `like` l on p.post_id = l.post_id where p.post_id =
+		#{postId} group by p.post_id
+	</select>
 
-<update id="addCnt" parameterType="long">
-	update post set read_cnt = read_cnt + 1 where post_id = #{postId}
-</update>
+	<update id="addCnt" parameterType="long">
+		update post set read_cnt = read_cnt + 1 where post_id = #{postId}
+	</update>
 
-<update id="mod" parameterType="pvo">
-	update post set files = #{files}, content = #{content} , mod_at = now()
-	where post_id = #{postId}
-</update>
+	<update id="mod" parameterType="pvo">
+		update post set files = #{files}, content = #{content} , mod_at = now()
+		where post_id = #{postId}
+	</update>
 
-<delete id="del" parameterType="long">
-	delete from post where post_id = #{postId}
-</delete>
+	<delete id="del" parameterType="long">
+		delete from post where post_id = #{postId}
+	</delete>
 
 </mapper>

@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +49,12 @@ public class UserController extends HttpServlet {
 		case "insert":
 			// 회원가입
 			// 이후 로그인페이지로
-//			isUp = usv.register(new UserVO(req.getParameter("email"), 
-//					Integer.parseInt(req.getParameter("age")), req.getParameter("name"), 
-//					req.getParameter("pwd"), Boolean.parseBoolean(req.getParameter("isAdmin")), req.getParameter("nickname")
-//					));
+			isUp = usv.register(new UserVO(req.getParameter("email"), 
+					Integer.parseInt(req.getParameter("age")), req.getParameter("name"), 
+					req.getParameter("pwd"), Boolean.parseBoolean(req.getParameter("isAdmin")), req.getParameter("nickName")
+					));
+			log.info(">> register {}", isUp > 0 ? "Success" : "Fail");
+			req.getRequestDispatcher("/index.jsp").forward(req, res);
 			break;
 		case "list":
 			// 관리자용 유저관리 리스트
@@ -77,8 +80,16 @@ public class UserController extends HttpServlet {
 			// 비동기방식
 			break;
 		case "login":
-			// 로그인
-			// 인덱스 페이지로
+			UserVO uvo = usv.logIn(new UserVO(req.getParameter("email"), req.getParameter("pwd")));
+			if (uvo != null) {
+				HttpSession ses = req.getSession();
+				ses.setAttribute("ses", uvo);
+				ses.setMaxInactiveInterval(60 * 20);
+			} else {
+				req.setAttribute("msg_u_login", 0);
+			}
+			rdp = req.getRequestDispatcher("/post/list.jsp");
+			rdp.forward(req, res);
 			break;
 		case "logout":
 			// 로그아웃

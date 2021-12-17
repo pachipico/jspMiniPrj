@@ -84,18 +84,16 @@
 
                 <h1 class="sprite_insta_big_logo title"></h1>
 
-                <form action="#">
+                <form action="/userCtrl/login">
                     <p class="login_user_name">
-                        <label for="user_name">사용자명:</label>
-                        <input type="text" id="user_name">
+                        <input type="text" name="email" placeholder="이메일">
                     </p>
 
                     <p class="login_user_password">
-                        <label for="user_password">비밀번호:</label>
-                        <input type="text" id="user_password">
+                        <input type="text" name="pwd" placeholder="비밀번호">
                     </p>
 
-                    <input type="submit" id="submit_btn" value="로그인" class="submit_btn">
+                    <input type="submit" value="로그인" class="submit_btn">
                 </form>
 
 

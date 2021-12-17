@@ -84,28 +84,32 @@
 
                 <h1 class="sprite_insta_big_logo title"></h1>
 
-                <form action="#">
+                <form action="/userCtrl/insert">
                     <p class="login_user_name">
-                        <label for="user_name">이메일 주소</label>
-                        <input type="text" id="user_name">
-                    </p>
-
-                    <p class="login_user_password">
-                        <label for="user_password">성명</label>
-                        <input type="text" id="user_password">
+                        <input type="text" name="email" placeholder="이메일 주소">
                     </p>
                     
                     <p class="login_user_password">
-                        <label for="user_password">사용자 이름</label>
-                        <input type="text" id="user_password">
+                        <input type="text" name="age" placeholder="나이">
+                    </p>
+
+                    <p class="login_user_password">
+                        <input type="text" name="name" placeholder="성명">
                     </p>
                     
                     <p class="login_user_password">
-                        <label for="user_password">비밀번호</label>
-                        <input type="text" id="user_password">
+                        <input type="text" name="nickName" placeholder="사용자이름">
+                    </p>
+                    
+                    <p class="login_user_password">
+                        <input type="text" name="pwd" placeholder="비밀번호">
+                    </p>
+                    
+                    <p class="login_user_password">
+                        <input type="hidden" name="isAdmin" value="false">
                     </p>
 
-                    <input type="submit" id="submit_btn" value="로그인" class="submit_btn">
+                    <input type="submit" value="회원가입" class="submit_btn">
                 </form>
 
 
@@ -114,7 +118,7 @@
 
             <div class="bottom_box">
                 <div>
-                    <span>아이디가 없으신가요?</span><a href="/userCtrl/register">회원가입</a>
+                    <span>계정이 있으신가요?</span><a href="/">로그인</a>
                 </div>
             </div>
 

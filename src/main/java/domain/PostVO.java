@@ -10,6 +10,8 @@ public class PostVO {
 	private int readCnt;
 	private String files;
 	private String content;
+	private String cmtWriter;
+	private String cmtContent;
 	
 	public PostVO() {
 	}
@@ -60,6 +62,22 @@ public class PostVO {
 
 	public String getWriter() {
 		return writer;
+	}
+
+	public String getCmtWriter() {
+		return cmtWriter;
+	}
+
+	public void setCmtWriter(String cmtWriter) {
+		this.cmtWriter = cmtWriter;
+	}
+
+	public String getCmtContent() {
+		return cmtContent;
+	}
+
+	public void setCmtContent(String cmtContent) {
+		this.cmtContent = cmtContent;
 	}
 
 	public void setWriter(String writer) {
@@ -117,8 +135,11 @@ public class PostVO {
 	@Override
 	public String toString() {
 		return "PostVO [postId=" + postId + ", writer=" + writer + ", likeCnt=" + likeCnt + ", regAt=" + regAt
-				+ ", modAt=" + modAt + ", readCnt=" + readCnt + ", files=" + files + ", content=" + content + "]";
+				+ ", modAt=" + modAt + ", readCnt=" + readCnt + ", files=" + files + ", content=" + content
+				+ ", cmtWriter=" + cmtWriter + ", cmtContent=" + cmtContent + "]";
 	}
+
+	
 	
 	
 }

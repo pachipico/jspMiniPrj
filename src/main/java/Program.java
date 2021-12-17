@@ -19,7 +19,6 @@ public class Program {
 		PostService psv = new PostServiceImple();
 		CommentService csv = new CommentServiceImple();
 
-		System.out.println(psv.remove(2));
-		System.out.println(psv.getList());
+		System.out.println(usv.getDetail("123@123.com"));
 	}
 }
