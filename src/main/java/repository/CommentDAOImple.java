@@ -30,8 +30,8 @@ public class CommentDAOImple implements CommentDAO {
 	}
 
 	@Override
-	public List<CommentVO> selectList(long cmtId) {
-		return sql.selectList(ns+"list");
+	public List<CommentVO> selectList(long postId) {
+		return sql.selectList(ns+"list", postId);
 	}
 
 	@Override

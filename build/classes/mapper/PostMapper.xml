@@ -10,7 +10,7 @@
 	</insert>
 
 	<select id="list" resultType="pvo">
-		select post.post_id , post.writer ,post.like_cnt ,post.mod_at ,post.read_cnt, post.content  , cmt.cmt_writer cmt_writer, cmt.content cmt_content
+<!-- 		select post.post_id , post.writer ,post.like_cnt ,post.mod_at ,post.read_cnt, post.content  , cmt.cmt_writer cmt_writer, cmt.content cmt_content
 from (
 select p.post_id , p.writer , p.mod_at , p.read_cnt, count(l.email) as like_cnt, p.content
 	from post p left join `like` l on p.post_id = l.post_id 
@@ -20,7 +20,13 @@ select c.post_id , c.writer cmt_writer, c.content
 from post p  right join comment c 
 on p.post_id = c.post_id
 ) cmt
-on post.post_id  = cmt.post_id;
+on post.post_id  = cmt.post_id -->
+select p.post_id, p.writer, count(l.email) like_cnt, p.content, p.mod_at, p.read_cnt
+from post p left join `like` l on p.post_id  = l.post_id 
+GROUP BY p.post_id 
+limit 0, 5
+;
+
 	</select>
 
 	<select id="one" parameterType="long" resultType="pvo">

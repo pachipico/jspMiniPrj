@@ -159,7 +159,7 @@
 								<div class="img_section">
 									<div class="trans_inner">
 										<div>
-											<a id="detailToggle" data-pid="${post.postId }" data-bs-toggle="modal" data-bs-target="#detailModal">
+											<a href="/postCtrl/detail?pid=${post.postId }" id="detailToggle" data-pid="${post.postId }" >
 											<img src="../imgs/img_section/img01.jpg" alt="visual01">
 											</a>
 										</div>
@@ -186,7 +186,7 @@
 									좋아요 <span id="like-count-39">${post.likeCnt}</span> <span
 										id="bookmark-count-39"></span> 개
 								</div>
-								<c:forEach items="${postList }" var="p" varStatus="st">
+								<c:forEach items="${postList }" var="p" varStatus="st" >
 									<c:if test="${p.postId == post.postId}">
 										<div class="comment_container">
 											<div class="comment" id="comment-list-ajax-post37">

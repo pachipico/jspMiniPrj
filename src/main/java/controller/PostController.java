@@ -23,6 +23,8 @@ import com.google.gson.GsonBuilder;
 
 import domain.PostVO;
 import domain.UserVO;
+import service.CommentService;
+import service.CommentServiceImple;
 import service.PostService;
 import service.PostServiceImple;
 import service.UserService;
@@ -52,6 +54,8 @@ public class PostController extends HttpServlet {
 
 		PostService psv = new PostServiceImple();
 		UserService usv = new UserServiceImple();
+		CommentService csv = new CommentServiceImple();
+		log.info("path : {}",path);
 		switch (path) {
 
 		case "insert":
@@ -89,14 +93,10 @@ public class PostController extends HttpServlet {
 			break;
 		case "detail":
 			// 게시물의 디테일로 이동
-//			System.out.println(req.getParameter("pid"));
-			PostVO pvo = psv.getDetail(Long.parseLong(req.getParameter("pid")));
-			JSONObject pvoJson = new JSONObject();
-			pvoJson.put("pvo", pvo);
-			Gson gson = new GsonBuilder().create();
-			String json = gson.toJson(pvoJson);
-			PrintWriter out = res.getWriter();
-			out.print(json);
+			Long pid = Long.parseLong(req.getParameter("pid"));
+			req.setAttribute("pvo", psv.getDetailAndUp(pid));
+			req.setAttribute("cvoList", csv.getList(pid));
+			req.getRequestDispatcher("/post/detail.jsp").forward(req, res);
 			break;
 		case "modify":
 			// 게시물 수정 페이지로

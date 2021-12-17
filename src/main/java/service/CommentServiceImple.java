@@ -23,8 +23,8 @@ public class CommentServiceImple implements CommentService {
 	}
 
 	@Override
-	public List<CommentVO> getList(long cmtId) {
-		return cdao.selectList(cmtId);
+	public List<CommentVO> getList(long postId) {
+		return cdao.selectList(postId);
 	}
 
 	@Override
