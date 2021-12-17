@@ -10,7 +10,6 @@
 	<typeAlias type="domain.UserVO" alias="uvo"/>
 	<typeAlias type="domain.PostVO" alias="pvo"/>
 	<typeAlias type="domain.CommentVO" alias="cvo"/>
-	<typeAlias type="domain.LikeVO" alias="lvo"/>
 	
 </typeAliases>
   <environments default="development">
@@ -31,6 +30,5 @@
     <mapper resource="mapper/UserMapper.xml"/>
     <mapper resource="mapper/CommentMapper.xml"/>
     <mapper resource="mapper/PostMapper.xml"/>
-    <mapper resource="mapper/LikeMapper.xml"/>
   </mappers>
 </configuration>

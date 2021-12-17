@@ -5,12 +5,12 @@
 <mapper namespace="CommentMapper">
 
 <insert id="reg" parameterType="cvo">
-	insert into comment (email, post_id, content)
-	values(#{email}, #{postId}, #{content})
+	insert into comment (writer, post_id, content)
+	values(#{writer}, #{postId}, #{content})
 </insert>
 
 <select id="list" resultType="cvo">
-	select email, mod_at, content 
+	select writer, mod_at, content 
 	from comment
 </select>
 

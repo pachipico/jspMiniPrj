@@ -23,7 +23,8 @@ public class PostVO {
 
 	
 	//list
-	public PostVO(String writer, int likeCnt, String regAt, String modAt, int readCnt) {
+	public PostVO( String writer, int likeCnt, String regAt, String modAt, int readCnt) {
+		
 		this.writer = writer;
 		this.likeCnt = likeCnt;
 		this.regAt = regAt;

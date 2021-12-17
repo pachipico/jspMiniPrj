@@ -3,7 +3,7 @@ package domain;
 public class CommentVO {
 
 	private long cmtId;
-	private String email;
+	private String writer;
 	private String regAt;
 	private String modAt;
 	private long postId;
@@ -13,15 +13,15 @@ public class CommentVO {
 	}
 
 	// register
-	public CommentVO(String email, long postId, String content) {
-		this.email = email;
+	public CommentVO(String writer, long postId, String content) {
+		this.writer = writer;
 		this.postId = postId;
 		this.content = content;
 	}
 
 	// list
-	public CommentVO(String email, String modAt, String content) {
-		this.email = email;
+	public CommentVO(String writer, String modAt, String content) {
+		this.writer = writer;
 		this.modAt = modAt;
 		this.content = content;
 	}
@@ -40,12 +40,12 @@ public class CommentVO {
 		this.cmtId = cmtId;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getWriter() {
+		return writer;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setWriter(String writer) {
+		this.writer = writer;
 	}
 
 	public String getRegAt() {
@@ -82,7 +82,7 @@ public class CommentVO {
 
 	@Override
 	public String toString() {
-		return "CommentVO [cmtId=" + cmtId + ", email=" + email + ", regAt=" + regAt + ", modAt=" + modAt + ", postId="
+		return "CommentVO [cmtId=" + cmtId + ", email=" + writer + ", regAt=" + regAt + ", modAt=" + modAt + ", postId="
 				+ postId + ", content=" + content + "]";
 	}
 

@@ -17,14 +17,13 @@ public class UserVO {
 
 	// register
 
-	public UserVO(String email, int age, String name, String pwd, boolean isAdmin, String nickName, String avatar) {
+	public UserVO(String email, int age, String name, String pwd, boolean isAdmin, String nickName) {
 		this.email = email;
 		this.age = age;
 		this.name = name;
 		this.pwd = pwd;
 		this.isAdmin = isAdmin;
 		this.nickName = nickName;
-		this.avatar = avatar;
 	}
 
 	// update
