@@ -23,13 +23,17 @@ public class PostServiceImple implements PostService {
 	}
 
 	@Override
-	public List<PostVO> getList() {
-//		List<PostVO> list = pdao.selectList();
-//		List<PostVO> result = null;
-//		for (PostVO pvo : list) {
-//			
-//		}
-		return pdao.selectList();
+	public List<PostVO> getList(int limit) {
+
+		return pdao.selectList(limit);
+	}
+	
+	
+
+	@Override
+	public int getCnt() {
+		
+		return pdao.selectCnt();
 	}
 
 	@Override

@@ -68,19 +68,23 @@ public class PostController extends HttpServlet {
 		case "list":
 			// 일단은 최신 순서대로 보여주고 구현이 완료되면 팔로우한 계정의 게시물을 보여줄 예정
 			// 세션이 있다면 여기가 홈 화면이 됨.
+			int limit = 5;
+			if(req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
+				limit = Integer.parseInt(req.getParameter("limit"));
+			}
 			HttpSession session = req.getSession();
-//			if(session.getAttribute("ses") == null) {
-//				res.sendRedirect("/index");
-//			} else {
-//			}
-			List<PostVO> postList = psv.getList();
+			log.info("count : {}",psv.getCnt());
+			List<PostVO> postList = psv.getList(limit);
 
 			List<UserVO> followingList = usv.getFollowingList("abc@abc.com");// 세션 이메일 넣을것
+			req.setAttribute("cnt", psv.getCnt());
+			req.setAttribute("limit", limit);
 			req.setAttribute("postList", postList);
 			req.setAttribute("followingList", followingList);
-//			for (PostVO post : list) {
-//				log.info(">>post: {}",post);
-//			}
+			int n  =0;
+			for (PostVO post : postList) {
+				req.setAttribute("cmt"+post.getPostId(), csv.getList(post.getPostId()));
+			}
 			req.getRequestDispatcher("/post/list.jsp").forward(req, res);
 
 			break;
@@ -108,6 +112,8 @@ public class PostController extends HttpServlet {
 		case "remove":
 			// 게시물 삭제
 			// 이후 내 게시물로 이동
+			psv.remove(Long.parseLong(req.getParameter("pid")));
+			req.getRequestDispatcher("/postCtrl/list");
 			break;
 		case "like":
 			// 좋아요 표시

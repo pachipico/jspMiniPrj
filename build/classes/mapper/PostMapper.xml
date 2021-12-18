@@ -24,9 +24,13 @@ on post.post_id  = cmt.post_id -->
 select p.post_id, p.writer, count(l.email) like_cnt, p.content, p.mod_at, p.read_cnt
 from post p left join `like` l on p.post_id  = l.post_id 
 GROUP BY p.post_id 
-limit 0, 5
+limit 0, #{limit}
 ;
 
+	</select>
+	
+	<select id="cnt" resultType="int">
+		select count(post_id) from post
 	</select>
 
 	<select id="one" parameterType="long" resultType="pvo">

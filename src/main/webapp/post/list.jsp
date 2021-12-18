@@ -129,9 +129,7 @@
 			<div class="inner">
 
 				<!-- 게시물 반복 시작 -->
-				<c:set value="0" var="pid" />
-				<c:forEach items="${postList }" var="post">
-					<c:if test="${pid < post.postId}">
+				<c:forEach items="${postList }" var="post" begin="0" end="${limit }">
 						<div class="contents_box">
 							<article class="contents">
 								<header class="top">
@@ -148,10 +146,18 @@
 
 									<div class="sprite_more_icon" data-name="more" id="toggle_more">
 										<ul class="toggle_box">
+										<!-- 본인 작성 글일때만 수정삭제 가능, 그 외엔 팔로우 버튼 노출 -->
+										<%-- <c:choose>
+											<c:when test="${ses.email == post.writer }"> --%>
+											<li>수정</li>
+											<li id="delPost" data-pid="${post.postId }">삭제</li>
+											<%-- </c:when>
+											<c:otherwise> --%>
 											<li><input type="submit" class="follow" value="팔로우"
 												data-name="follow"></li>
-											<li>수정</li>
-											<li>삭제</li>
+											<%-- </c:otherwise>
+										</c:choose> --%>
+											
 										</ul>
 									</div>
 								</header>
@@ -186,34 +192,34 @@
 									좋아요 <span id="like-count-39">${post.likeCnt}</span> <span
 										id="bookmark-count-39"></span> 개
 								</div>
-								<c:forEach items="${postList }" var="p" varStatus="st" >
-									<c:if test="${p.postId == post.postId}">
+								<h2>${ p.postId}</h2>
+								<c:set value="cmt${post.postId }" var="pid" />
+								<c:forEach items="${requestScope[pid]}" var="p" varStatus="st" begin="0" end="3" >
 										<div class="comment_container">
 											<div class="comment" id="comment-list-ajax-post37">
 												<div class="comment-detail">
-													<div class="nick_name m_text">${p.cmtWriter }</div>
-													<div>${p.cmtContent }</div>
-													<div>count${st.count }</div>
-													<div>pid${pid}</div>
+													<div class="nick_name m_text">${p.writer }</div>
+													<div>${p.content }</div>
+											
 												</div>
 											</div>
 											<div class="small_heart">
 												<div class="sprite_small_heart_icon_outline"></div>
 											</div>
 										</div>
-									</c:if>
 								</c:forEach>
 								<div class="timer">${post.modAt}</div>
 
 								<div class="comment_field" id="add-comment-post37">
-									<input type="text" placeholder="댓글달기...">
+									<input type="text" placeholder="댓글달기..." name="comment">
 									<div class="upload_btn m_text" data-name="comment">게시</div>
 								</div>
 							</article>
 						</div>
-						<c:set var="pid" value="${post.postId }" />
-					</c:if>
 				</c:forEach>
+				<c:if test="${cnt >= limit }">
+				<a href="/postCtrl/list?limit=10" id="getMore">게시글 더보기</a>
+				</c:if>
 				<!-- 게시물 반복 끝 -->
 
 				<!-- register모달 -->
@@ -247,37 +253,6 @@
 						</div>
 					</div>
 				</div>
-				<!-- detail모달  -->
-				<div class="modal" id="detailModal">
-					<div class="modal-dialog modal-fullscreen" style="padding:40px;">
-						<div class="modal-content">
-
-							<!-- Modal Header -->
-							<div class="modal-header">
-								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-							</div>
-
-							<!-- Modal body -->
-							<div class="modal-body">
-							<div> image</div>
-							<div>
-							<div id="writerDiv">작성자</div>
-							<div id="contentDiv">본문내용</div>
-							<div>댓글</div>
-							</div>
-
-							</div>
-
-							<!-- Modal footer -->
-							<div class="modal-footer">
-								<button type="button" class="btn btn-danger"
-									data-bs-dismiss="modal">Close</button>
-							</div>
-
-						</div>
-					</div>
-				</div>
-				<!--  -->
 				<input type="hidden" id="page" value="1">
 
 				<div class="side_box">

@@ -29,13 +29,20 @@ public class PostDAOImple implements PostDAO {
 	}
 
 	@Override
-	public List<PostVO> selectList() {
-		return sql.selectList(ns+"list");
+	public List<PostVO> selectList(int limit) {
+		return sql.selectList(ns+"list", limit);
 	}
 
 	@Override
 	public PostVO selectOne(long postId) {
 		return sql.selectOne(ns+"one", postId);
+	}
+
+
+	
+	@Override
+	public int selectCnt() {
+		return sql.selectOne(ns+"cnt");
 	}
 
 	@Override
