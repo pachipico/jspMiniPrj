@@ -192,9 +192,9 @@
 									좋아요 <span id="like-count-39">${post.likeCnt}</span> <span
 										id="bookmark-count-39"></span> 개
 								</div>
-								<h2>${ p.postId}</h2>
+								<div id="comment_area${post.postId}">
 								<c:set value="cmt${post.postId }" var="pid" />
-								<c:forEach items="${requestScope[pid]}" var="p" varStatus="st" begin="0" end="3" >
+								<c:forEach items="${requestScope[pid]}" var="p" varStatus="st" begin="0"  >
 										<div class="comment_container">
 											<div class="comment" id="comment-list-ajax-post37">
 												<div class="comment-detail">
@@ -208,11 +208,12 @@
 											</div>
 										</div>
 								</c:forEach>
+								</div>
 								<div class="timer">${post.modAt}</div>
 
 								<div class="comment_field" id="add-comment-post37">
-									<input type="text" placeholder="댓글달기..." name="comment">
-									<div class="upload_btn m_text" data-name="comment">게시</div>
+									<input id="commentInput" type="text" placeholder="댓글달기..." name="comment">
+									<div id="commentUploadBtn" class="upload_btn m_text" data-pid="${post.postId}">게시</div>
 								</div>
 							</article>
 						</div>
