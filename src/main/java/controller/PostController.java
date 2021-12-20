@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -21,10 +22,13 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import domain.LikeVO;
 import domain.PostVO;
 import domain.UserVO;
 import service.CommentService;
 import service.CommentServiceImple;
+import service.LikeService;
+import service.LikeServiceImple;
 import service.PostService;
 import service.PostServiceImple;
 import service.UserService;
@@ -55,7 +59,8 @@ public class PostController extends HttpServlet {
 		PostService psv = new PostServiceImple();
 		UserService usv = new UserServiceImple();
 		CommentService csv = new CommentServiceImple();
-		log.info("path : {}",path);
+		LikeService lsv = new LikeServiceImple();
+		log.info("path : {}", path);
 		switch (path) {
 
 		case "insert":
@@ -69,21 +74,24 @@ public class PostController extends HttpServlet {
 			// 일단은 최신 순서대로 보여주고 구현이 완료되면 팔로우한 계정의 게시물을 보여줄 예정
 			// 세션이 있다면 여기가 홈 화면이 됨.
 			int limit = 5;
-			if(req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
+			if (req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
 				limit = Integer.parseInt(req.getParameter("limit"));
 			}
 			HttpSession session = req.getSession();
-			log.info("count : {}",psv.getCnt());
+			log.info("count : {}", psv.getCnt());
 			List<PostVO> postList = psv.getList(limit);
+			List<LikeVO> likeList = lsv.getList("123@123.com");
 
 			List<UserVO> followingList = usv.getFollowingList("abc@abc.com");// 세션 이메일 넣을것
+
+			req.setAttribute("likeList", likeList);
 			req.setAttribute("cnt", psv.getCnt());
 			req.setAttribute("limit", limit);
 			req.setAttribute("postList", postList);
 			req.setAttribute("followingList", followingList);
-			int n  =0;
+			int n = 0;
 			for (PostVO post : postList) {
-				req.setAttribute("cmt"+post.getPostId(), csv.getList(post.getPostId()));
+				req.setAttribute("cmt" + post.getPostId(), csv.getList(post.getPostId()));
 			}
 			req.getRequestDispatcher("/post/list.jsp").forward(req, res);
 
@@ -103,25 +111,69 @@ public class PostController extends HttpServlet {
 			req.getRequestDispatcher("/post/detail.jsp").forward(req, res);
 			break;
 		case "modify":
-			// 게시물 수정 페이지로
+			// 게시물 수정을 위한 정보 받아오기
+			PostVO pvo = psv.getDetail(Long.parseLong(req.getParameter("pid")));
+			JSONParser parser = new JSONParser();
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("content", pvo.getContent());
+			jsonObject.put("pid", pvo.getPostId());
+			PrintWriter out = res.getWriter();
+			System.out.println(jsonObject);
+			out.print(jsonObject);
+
 			break;
 		case "update":
 			// 게시물 수정
 			// 이후 내 게시물로 이동
+			isUp = psv.modify(new PostVO(Long.parseLong(req.getParameter("pid")), null, req.getParameter("content")));
+			log.info(">>> update {}", isUp > 0 ? "success" : "fail");
+			res.sendRedirect("/postCtrl/list");
 			break;
 		case "remove":
 			// 게시물 삭제
 			// 이후 내 게시물로 이동
 			psv.remove(Long.parseLong(req.getParameter("pid")));
-			req.getRequestDispatcher("/postCtrl/list");
+
 			break;
 		case "like":
 			// 좋아요 표시
 			// 비동기
+			StringBuffer sb = new StringBuffer();
+			String line = null;
+			BufferedReader br = req.getReader();
+
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+			JSONParser parser2 = new JSONParser();
+			try {
+				JSONObject jsonObj = (JSONObject) parser2.parse(sb.toString());
+				lsv.like(new LikeVO((String) jsonObj.get("email"), Long.valueOf((String) jsonObj.get("pid"))));
+			} catch (ParseException e) {
+
+				e.printStackTrace();
+			}
+			req.getRequestDispatcher("/postCtrl/list").forward(req, res);
 			break;
 		case "unlike":
 			// 좋아요 없애기
 			// 비동기
+			StringBuffer sb2 = new StringBuffer();
+			String line2 = null;
+			BufferedReader br2 = req.getReader();
+
+			while ((line = br2.readLine()) != null) {
+				sb2.append(line);
+			}
+			JSONParser parser3 = new JSONParser();
+			try {
+				JSONObject jsonObj2 = (JSONObject) parser3.parse(sb2.toString());
+				lsv.unLike(new LikeVO((String) jsonObj2.get("email"), Long.valueOf((String) jsonObj2.get("pid"))));
+			} catch (ParseException e) {
+
+				e.printStackTrace();
+			}
+			req.getRequestDispatcher("/postCtrl/list").forward(req, res);
 			break;
 
 		default:

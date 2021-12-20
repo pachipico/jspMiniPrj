@@ -91,8 +91,7 @@ body {
 
 .content_area {
   display: flex;
-  height: 70%;
-  display: flex;
+  flex-grow:1;  
   font-size: 1.5em;
   flex-direction: column;
 }
@@ -101,7 +100,8 @@ body {
 }
 
 .cmt_area {
-  flex-grow: 1;
+  height: 30%;
+  overflow: scroll;
 }
 
 .cmt_area > span {
@@ -118,6 +118,10 @@ body {
 }
 .cmt_text {
   flex-grow: 1;
+}
+
+.scroll_div{
+	overflow:hidden;
 }
 
 .cmt_writer_area,

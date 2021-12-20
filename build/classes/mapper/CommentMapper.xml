@@ -10,8 +10,9 @@
 </insert>
 
 <select id="list" resultType="cvo">
-	select writer, mod_at, content 
+	select writer, mod_at, content , reg_at
 	from comment where post_id = #{postId}
+	order by reg_at desc
 </select>
 
 <update id="mod" parameterType="cvo">

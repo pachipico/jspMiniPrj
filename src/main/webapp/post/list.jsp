@@ -12,7 +12,7 @@
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css"
 	rel="stylesheet">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <!-- Latest compiled JavaScript -->
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -127,10 +127,11 @@
 
 		<section id="main_container">
 			<div class="inner">
-
+			<!-- 세션 이메일 -->
+			<input type="hidden" id="userSession" name="userSession" value="123@123.com">
 				<!-- 게시물 반복 시작 -->
 				<c:forEach items="${postList }" var="post" begin="0" end="${limit }">
-						<div class="contents_box">
+						<div class="contents_box" id="post${post.postId }">
 							<article class="contents">
 								<header class="top">
 									<div class="user_container">
@@ -149,7 +150,7 @@
 										<!-- 본인 작성 글일때만 수정삭제 가능, 그 외엔 팔로우 버튼 노출 -->
 										<%-- <c:choose>
 											<c:when test="${ses.email == post.writer }"> --%>
-											<li>수정</li>
+											<li id="updatePost" data-pid="${post.postId }"><a data-bs-toggle="modal" data-bs-target="#updateModal">수정</a></li>
 											<li id="delPost" data-pid="${post.postId }">삭제</li>
 											<%-- </c:when>
 											<c:otherwise> --%>
@@ -175,9 +176,16 @@
 								<div class="bottom_icons">
 									<div class="left_icons">
 										<div class="heart_btn">
-											<a href="/postCtrl/like"  id="likeBtn">
-											<div class="sprite_heart_icon_outline" name="39"
-												data-name="heartbeat"></div>
+											<a id="likeBtn" data-pid="${post.postId}">
+											<!-- like테이블에서 목록을 가져온 후, 처리를 어떻게? -->
+											<c:set var="heart" value="bi-heart" />
+											<c:forEach items="${likeList }" var="likedPost">
+												<c:if test="${post.postId == likedPost.postId }">
+												<c:set var="heart" value="bi-heart-fill red" />
+												</c:if>
+											</c:forEach>
+											<div class="bi ${heart } icon" name="39"
+												data-pid="${post.postId }" ></div>
 												</a>
 										</div>
 										<div class="sprite_bubble_icon"></div>
@@ -189,7 +197,7 @@
 								</div>
 
 								<div class="likes m_text">
-									좋아요 <span id="like-count-39">${post.likeCnt}</span> <span
+									좋아요 <span id="like-count${post.postId }">${post.likeCnt}</span> <span
 										id="bookmark-count-39"></span> 개
 								</div>
 								<div id="comment_area${post.postId}">
@@ -254,6 +262,40 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- update modal -->
+				<div class="modal" id="updateModal">
+					<div class="modal-dialog">
+						<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">게시물 수정</h4>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+							</div>
+
+							<!-- Modal body -->
+							<div class="modal-body">
+								<form action="/postCtrl/update" method="post">
+									<input type="hidden" name="pid" id="updatePid" value="" >
+									<input type="text" name="content" id="updateContent" "> 
+									<input type="text"
+										name="writer" value="123@123.com">
+									<button type="submit" >submit</button>
+								</form>
+
+							</div>
+
+							<!-- Modal footer -->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger"
+									data-bs-dismiss="modal">Close</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+				<!--  -->
 				<input type="hidden" id="page" value="1">
 
 				<div class="side_box">

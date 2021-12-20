@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="LikeMapper">
+	
+	<insert id="like" parameterType="lvo">
+		insert into `like`(email, post_id) values(#{email}, ${postId})
+	</insert>
+	
+	<select id="list" parameterType="string" resultType="lvo" >
+		select post_id from `like` where email = #{email}
+	</select>
+	
+	<delete id="unlike" parameterType="lvo">
+		delete from `like` where email = #{email} and post_id = #{postId}
+	</delete>
+</mapper>

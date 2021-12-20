@@ -54,8 +54,9 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         </div>
         <div class="cmt_area">
           <span> 댓글</span>
+          <div class="scroll_div">
           <c:forEach items="${cvoList }" var="cvo">
-            <div class="cmt">
+            <div class="cmt ">
               <div class="cmt_img">
                 <img class="avatar" src="https://picsum.photos/25/25/" alt="" />
               </div>
@@ -71,6 +72,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               </div>
             </div>
           </c:forEach>
+          </div>
         </div>
       </div>
     </div>
