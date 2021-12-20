@@ -11,12 +11,10 @@ public class UserVO {
 	private String regAt;
 	private String following;
 	private String follower;
-
-	public UserVO() {
-	}
-
+	
+	public UserVO() {}
+	
 	// register
-
 	public UserVO(String email, int age, String name, String pwd, boolean isAdmin, String nickName) {
 		this.email = email;
 		this.age = age;
@@ -27,15 +25,21 @@ public class UserVO {
 	}
 
 	// update
-
-	public UserVO(String email, Boolean isAdmin, String nickName, String avatar) {
+	public UserVO(String email, int age, String name, Boolean isAdmin, String nickName) {
 		this.email = email;
+		this.age = age;
+		this.name = name;
 		this.isAdmin = isAdmin;
 		this.nickName = nickName;
-		this.avatar = avatar;
+	}
+	
+	// password update
+	public UserVO(String email, String pwd, boolean pwdchange) {
+		this.email = email;
+		this.pwd = pwd;
 	}
 
-	// admin page member관리 && 개인 정보 수정 && 세션에 담을때
+	//admin page member관리 (list) & login result
 	public UserVO(String email, int age, String name, boolean isAdmin, String nickName, String avatar, String regAt) {
 		this.email = email;
 		this.age = age;
@@ -45,23 +49,41 @@ public class UserVO {
 		this.avatar = avatar;
 		this.regAt = regAt;
 	}
-
+	
+	// detail
+	public UserVO(String email, int age, String name, boolean isAdmin, String nickName, String avatar, String regAt,
+			String following, String follower) {
+		this.email = email;
+		this.age = age;
+		this.name = name;
+		this.isAdmin = isAdmin;
+		this.nickName = nickName;
+		this.avatar = avatar;
+		this.regAt = regAt;
+		this.following = following;
+		this.follower = follower;
+	}
+	
 	// list
 	public UserVO(String name, String nickName, String avatar) {
 		this.name = name;
 		this.nickName = nickName;
 		this.avatar = avatar;
 	}
-
+	
 	// login 할때
 	public UserVO(String email, String pwd) {
 		this.email = email;
 		this.pwd = pwd;
 	}
+	
+	public UserVO(String parameter, String parameter2, String parameter3, String parameter4) {
+	}
 
 	public String getEmail() {
 		return email;
 	}
+
 
 	public void setEmail(String email) {
 		this.email = email;
@@ -145,5 +167,15 @@ public class UserVO {
 				+ ", nickname=" + nickName + ", avatar=" + avatar + ", regAt=" + regAt + ", following=" + following
 				+ ", follower=" + follower + "]";
 	}
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

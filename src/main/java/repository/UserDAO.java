@@ -18,4 +18,6 @@ public interface UserDAO {
 	public String selectFollowerCSV(String email);
 	public String selectFollowingCSV(String email);
 	public List<UserVO> selectListByEmail(ArrayList<String> csv);
+	public int updatePwd(UserVO uvo);
+	public int updateAvatar(UserVO uvo);
 }

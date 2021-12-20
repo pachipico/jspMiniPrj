@@ -5,10 +5,11 @@ let delPostBtn = document.querySelectorAll("#delPost");
 let updatePostBtn = document.querySelectorAll("#updatePost");
 let commentField = document.querySelectorAll("div .comment_field");
 let likeBtn = document.querySelectorAll("#likeBtn");
+let followBtn = document.querySelectorAll("input.follow");
 let limit = 5;
 
 const commentArea = document.getElementById("comment_area");
-
+console.log(`userSession: ${userSession}`);
 const deleteRequest = async (pid) => {
   const res = await fetch("/postCtrl/remove?pid=" + pid);
   return res;
@@ -80,6 +81,51 @@ const unlikePost = async (pid, email) => {
   }
 };
 
+const follow = async (email) => {
+  const config = {
+    method: "POST",
+    body: {
+      from: userSession,
+      to: email,
+    },
+  };
+  try {
+    const res = await fetch("/userCtrl/follow", config);
+    return res.text();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const unFollow = async (email) => {
+  const config = {
+    method: "POST",
+    body: {
+      from: userSession,
+      to: email,
+    },
+  };
+  try {
+    const res = await fetch("/userCtrl/unfollow", config);
+    return res.text();
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+[].forEach.call(followBtn, (followBtn) => {
+  let email = followBtn.dataset.fEmail;
+  followBtn.addEventListener("click", () => {
+    if (followBtn.value == "팔로우") {
+      followBtn.value = "언팔로우";
+      follow(email);
+    } else {
+      followBtn.value = "팔로우";
+      unFollow(email);
+    }
+  });
+});
+
 [].forEach.call(likeBtn, (likeBtn) => {
   likeBtn.addEventListener("click", () => {
     const heart = likeBtn.querySelector(".bi");
@@ -115,7 +161,7 @@ const unlikePost = async (pid, email) => {
 
 [].forEach.call(delPostBtn, (delPostBtn) => {
   delPostBtn.addEventListener("click", () => {
-    console.log(delPostBtn.dataset.pid);
+    console.log(`delete id : ${delPostBtn.dataset.pid}`);
     deleteRequest(delPostBtn.dataset.pid).then((result) => {
       document.querySelector("#post" + delPostBtn.dataset.pid).innerHTML = "";
     });
@@ -129,7 +175,6 @@ const unlikePost = async (pid, email) => {
         return result.json();
       })
       .then((result) => {
-        console.log(result);
         document.querySelector("#updateContent").value = result.content;
         document.querySelector("#updatePid").value = result.pid;
       });

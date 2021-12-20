@@ -52,19 +52,59 @@ public class UserServiceImple implements UserService {
 
 	@Override
 	public void follow(String from, String to) {
+		List<String> fromFollowingList = new ArrayList<>();
+		List<String> toFollowerList = new ArrayList<>();
 		Map<String, String> fromMap = udao.selectFollow(from);
 		Map<String, String> toMap = udao.selectFollow(to);
+		
 		String fromFollowing = (String) fromMap.get("following");
-		List<String> fromFollowingList = new ArrayList<>(Arrays.asList(fromFollowing.split(",")));
+		if (fromFollowing == null || fromFollowing == "") {
+			fromFollowing = "";
+		} else {			
+			fromFollowingList.addAll(Arrays.asList(fromFollowing.split(",")));
+		}
 		String toFollower = (String) toMap.get("follower");
-		List<String> toFollowerList = new ArrayList<>(Arrays.asList(toFollower.split(",")));
-		System.out.println("asdf");
+		if (toFollower == null || toFollower == "") {
+			toFollower = "";
+		} else {
+			toFollowerList.addAll(Arrays.asList(toFollower.split(",")));						
+		}
+		
+		System.out.println("팔로우하는사람의 팔로우목록 : " + fromFollowing);
+		System.out.println("팔로우받는사람의 팔로워목록 : " + toFollower);
+		
+		System.out.print("팔로잉 리스트 : [");
+		for (String string : fromFollowingList) {
+			System.out.print(string);
+		}
+		System.out.println("]");
+		
+		System.out.print("팔로워 리스트 : [");
+		for (String string : toFollowerList) {
+			System.out.print(string);
+		}
+		System.out.println("]");
+		
 		if (!fromFollowingList.contains(to)) {
-			fromFollowing += to + ",";
+			if (fromFollowingList.size() > 0) {
+				fromFollowing += to + ",";
+			} else {
+				fromFollowing += to;
+			}
+//			fromFollowing += to + ",";
 		}
 		if (!toFollowerList.contains(from)) {
-			toFollower += from + ",";
+			if (toFollowerList.size() > 0) {
+				toFollower += from + ",";
+			} else {
+				fromFollowing += from;
+			}
+//			toFollower += from + ",";
 		}
+
+		System.out.println("팔로우하는사람의 팔로우목록 : " + fromFollowing);
+		System.out.println("팔로우받는사람의 팔로워목록 : " + toFollower);
+		
 
 		udao.setFollow((String) fromMap.get("follower"), fromFollowing, from);
 		udao.setFollow(toFollower, (String) toMap.get("following"), to);
@@ -72,15 +112,44 @@ public class UserServiceImple implements UserService {
 
 	@Override
 	public int unFollow(String from, String to) {
+		List<String> fromFollowingList = new ArrayList<>();
+		List<String> toFollowerList = new ArrayList<>();
 		Map<String, String> fromMap = udao.selectFollow(from);
 		Map<String, String> toMap = udao.selectFollow(to);
+		
 		String fromFollowing = (String) fromMap.get("following");
-		List<String> fromFollowingList = new ArrayList<>(Arrays.asList(fromFollowing.split(",")));
+		if (fromFollowing == null || fromFollowing == "") {
+			fromFollowing = "";
+		} else {			
+			fromFollowingList.addAll(Arrays.asList(fromFollowing.split(",")));			
+		}
 		String toFollower = (String) toMap.get("follower");
-		List<String> toFollowerList = new ArrayList<>(Arrays.asList(toFollower.split(",")));
+		if (toFollower == null || toFollower == "") {
+			toFollower = "";
+		} else {
+			toFollowerList.addAll(Arrays.asList(toFollower.split(",")));						
+		}
+		
+		System.out.println("팔로우하는사람의 팔로우목록 : " + fromFollowing);
+		System.out.println("팔로우받는사람의 팔로워목록 : " + toFollower);
+		
+		System.out.print("팔로잉 리스트 : [");
+		for (String string : fromFollowingList) {
+			System.out.print(string);
+		}
+		System.out.println("]");
+		
+		System.out.print("팔로워 리스트 : [");
+		for (String string : toFollowerList) {
+			System.out.print(string);
+		}
+		System.out.println("]");
+		
+		System.out.println("목표의 인덱스값 : " + fromFollowingList.indexOf(to));
+		System.out.println("목표의 인덱스값 : " + toFollowerList.indexOf(from));
 
-		fromFollowingList.remove(to);
-		toFollowerList.remove(from);
+		fromFollowingList.remove(fromFollowingList.indexOf(to));
+		toFollowerList.remove(toFollowerList.indexOf(from));
 		fromFollowing = "";
 		toFollower = "";
 		for (String string : fromFollowingList) {
@@ -90,6 +159,9 @@ public class UserServiceImple implements UserService {
 		for (String string : toFollowerList) {
 			toFollower += string + ",";
 		}
+		
+		System.out.println("팔로우하는사람의 팔로우목록 : " + fromFollowing);
+		System.out.println("팔로우받는사람의 팔로워목록 : " + toFollower);
 
 		udao.setFollow((String) fromMap.get("follower"), fromFollowing, from);
 		udao.setFollow(toFollower, (String) toMap.get("following"), to);
@@ -108,6 +180,16 @@ public class UserServiceImple implements UserService {
 		ArrayList<String> arr = new ArrayList<>(Arrays.asList(udao.selectFollowingCSV(email).split(",")));
 		System.out.println(arr);
 		return udao.selectListByEmail(arr);
+	}
+
+	@Override
+	public int modifyPwd(UserVO uvo) {
+		return udao.updatePwd(uvo);
+	}
+
+	@Override
+	public int modifyAvatar(UserVO uvo) {
+		return udao.updateAvatar(uvo);
 	}
 
 }

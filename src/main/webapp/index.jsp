@@ -8,25 +8,6 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
-    <!-- Facebook Meta Tags / 페이스북 오픈 그래프 -->
-    <meta property="og:url" content="http://kindtiger.dothome.co.kr/insta">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="instagram">
-    <meta property="og:description" content="instagram clone">
-    <meta property="og:image" content="http://kindtiger.dothome.co.kr/insta/imgs/instagram.jpeg">
-    .
-    <!-- Twitter Meta Tags / 트위터 -->
-    <meta name="twitter:card" content="instagram clone">
-    <meta name="twitter:title" content="instagram">
-    <meta name="twitter:description" content="instagram clone">
-    <meta name="twitter:image" content="http://kindtiger.dothome.co.kr/insta/imgs/instagram.jpeg">
-
-    <!-- Google / Search Engine Tags / 구글 검색 엔진 -->
-    <meta itemprop="name" content="instagram">
-    <meta itemprop="description" content="instagram clone">
-    <meta itemprop="image" content="http://kindtiger.dothome.co.kr/insta/imgs/instagram.jpeg">
-
-
     <title>instagram</title>
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/common.css">
@@ -36,44 +17,11 @@
 
 </head>
 <body>
-
+<c:if test="${ses.email ne '' && ses.email ne null  }">
+	<a href="/postCtrl/list" id="list" style="display: none;"></a>
+</c:if>
 
 <section id="container">
-
-
-
-    <header id="header">
-        <section class="h_inner">
-
-            <h1 class="logo">
-                <a href="index.jsp">
-                    <div class="sprite_insta_icon"></div>
-                    <div>
-                        <div class="sprite_write_logo"></div>
-                    </div>
-                </a>
-            </h1>
-
-            <div class="search_field">
-                <input type="text" placeholder="검색" tabindex="0">
-
-                <div class="fake_field">
-                    <span class=sprite_small_search_icon></span>
-                    <span>검색</span>
-                </div>
-            </div>
-
-
-            <div class="right_icons">
-                <a href="../new_post.html"><div class="sprite_camera_icon"></div></a>
-                <a href="../login.html"><div class="sprite_compass_icon"></div></a>
-                <a href="../follow.html"><div class="sprite_heart_icon_outline"></div></a>
-                <a href="../profile.html"><div class="sprite_user_icon_outline"></div></a>
-            </div>
-        </section>
-    </header>
-
-
 
     <div id="main_container">
 
@@ -86,11 +34,11 @@
 
                 <form action="/userCtrl/login">
                     <p class="login_user_name">
-                        <input type="text" name="email" placeholder="이메일">
+                        <input type="text" name="email" placeholder="이메일" id="email">
                     </p>
 
                     <p class="login_user_password">
-                        <input type="text" name="pwd" placeholder="비밀번호">
+                        <input type="text" name="pwd" placeholder="비밀번호" id="pwd">
                     </p>
 
                     <input type="submit" value="로그인" class="submit_btn">
@@ -101,6 +49,12 @@
             </div>
 
             <div class="bottom_box">
+            
+                <a href="https://kauth.kakao.com/oauth/authorize?client_id=47aebbe977c3814499235ae9556522cc&redirect_uri=http://localhost:8081/userCtrl/kakaologin&response_type=code" id="kakao"><img src="../imgs/kakao_login_medium_narrow.png"></a>
+            </div>
+            
+            <div class="bottom_box">
+            
                 <div>
                     <span>아이디가 없으신가요?</span><a href="/userCtrl/register">회원가입</a>
                 </div>
@@ -115,6 +69,13 @@
 </section>
 
 
-<script src="js/insta.js"></script>
+<script src="../js/index.js"></script>
+<script>
+	let msg_u_login = '<c:out value="${msg_u_login }"/>';
+	if (msg_u_login.length > 0) {
+		alert("로그인 실패");
+	}
+</script>
+<!-- <script src="../js/kakaologin.js"></script> -->
 </body>
 </html>

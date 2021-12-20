@@ -15,4 +15,6 @@ public interface UserService {
 	public int unFollow(String from, String to);
 	public List<UserVO> getFollowerList(String email);
 	public List<UserVO> getFollowingList(String email);
+	public int modifyPwd(UserVO uvo);
+	public int modifyAvatar(UserVO uvo);
 }

@@ -1,61 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport"
-	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<title>Title</title>
-<!-- Latest compiled and minified CSS -->
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-<!-- Latest compiled JavaScript -->
-<script
-	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<link rel="stylesheet" href="../css/reset.css">
-<link rel="stylesheet" href="../css/common.css">
-<link rel="stylesheet" href="../css/style.css">
-
-
-</head>
-<body>
-
-	<section id="container">
-
-		<header id="header">
-			<section class="inner">
-
-				<h1 class="logo">
-					<a href="index.html">
-						<div class="sprite_insta_icon"></div>
-						<div class="sprite_write_logo"></div>
-					</a>
-				</h1>
-
-				<div class="search_box">
-					<input type="text" placeholder="검색" id="search-field">
-
-					<div class="fake_field">
-						<span class="sprite_small_search_icon"></span> <span>검색</span>
-					</div>
-				</div>
-
-				<div class="right_icons">
-					<a href="" data-bs-toggle="modal" data-bs-target="#regModal"><div
-							class="sprite_camera_icon"></div></a> <a href="login.html"><div
-							class="sprite_compass_icon"></div></a> <a href="follow.html"><div
-							class="sprite_heart_icon_outline"></div></a> <a href="profile.html"><div
-							class="sprite_user_icon_outline"></div></a>
-				</div>
-
-			</section>
-
-		</header>
+<jsp:include page="../header1.jsp" />
+<link rel="stylesheet" href="../css/profile.css">
+<jsp:include page="../header2.jsp" />
 
 		<div class="hidden_menu">
 			<div class="scroll_inner">
@@ -128,7 +76,7 @@
 		<section id="main_container">
 			<div class="inner">
 			<!-- 세션 이메일 -->
-			<input type="hidden" id="userSession" name="userSession" value="123@123.com">
+			<input type="hidden" id="userSession" name="userSession" value="${ses.email }">
 				<!-- 게시물 반복 시작 -->
 				<c:forEach items="${postList }" var="post" begin="0" end="${limit }">
 						<div class="contents_box" id="post${post.postId }">
@@ -139,7 +87,7 @@
 											<img src="../imgs/thumb.jpeg" alt="프로필이미지">
 										</div>
 										<div class="user_name">
-											<div class="nick_name m_text">${post.writer }</div>
+											<div class="nick_name m_text"><a class="decoration_none" href="/userCtrl/profile?email=${post.writer }">${post.writer }</a></div>
 											<div class="country s_text">Seoul, South Korea</div>
 										</div>
 
@@ -148,16 +96,22 @@
 									<div class="sprite_more_icon" data-name="more" id="toggle_more">
 										<ul class="toggle_box">
 										<!-- 본인 작성 글일때만 수정삭제 가능, 그 외엔 팔로우 버튼 노출 -->
-										<%-- <c:choose>
-											<c:when test="${ses.email == post.writer }"> --%>
+										 <c:choose>
+											<c:when test="${ses.email == post.writer }"> 
 											<li id="updatePost" data-pid="${post.postId }"><a data-bs-toggle="modal" data-bs-target="#updateModal">수정</a></li>
 											<li id="delPost" data-pid="${post.postId }">삭제</li>
-											<%-- </c:when>
-											<c:otherwise> --%>
-											<li><input type="submit" class="follow" value="팔로우"
-												data-name="follow"></li>
-											<%-- </c:otherwise>
-										</c:choose> --%>
+											 </c:when>
+											<c:otherwise> 
+											<c:set value="팔로우" var="text" />
+											<c:forEach items="${followingList }" var="each">
+													<c:if test="${each.email == post.writer }">
+													<c:set value="언팔로우" var="text" />
+													</c:if>
+												</c:forEach>
+											<li><input type="submit" class="follow" value="${text}"
+												data-fEmail="${post.writer }"></li>
+											</c:otherwise>
+										</c:choose> 
 											
 										</ul>
 									</div>
@@ -174,7 +128,7 @@
 								</div>
 
 								<div class="bottom_icons">
-									<div class="left_icons">
+									<div class="left_icons" style="align-items: center">
 										<div class="heart_btn">
 											<a id="likeBtn" data-pid="${post.postId}">
 											<!-- like테이블에서 목록을 가져온 후, 처리를 어떻게? -->
@@ -247,7 +201,7 @@
 								<form action="/postCtrl/insert" method="post">
 									<input type="text" name="content"> 
 									<input type="text"
-										name="writer" value="123@123.com">
+										name="writer" value="${ses.email }">
 									<button type="submit" >submit</button>
 								</form>
 
@@ -280,7 +234,7 @@
 									<input type="hidden" name="pid" id="updatePid" value="" >
 									<input type="text" name="content" id="updateContent" "> 
 									<input type="text"
-										name="writer" value="123@123.com">
+										name="writer" value="${ses.email }">
 									<button type="submit" >submit</button>
 								</form>
 
@@ -304,8 +258,8 @@
 							<img src="../imgs/thumb.jpeg" alt="프로필사진">
 						</div>
 						<div class="detail">
-							<div class="id m_text">KindTiger</div>
-							<div class="ko_name">심선범</div>
+							<div class="id m_text">${ses.nickname }(${ses.email })</div>
+							<div class="ko_name">${ses.name }</div>
 						</div>
 					</div>
 
@@ -323,7 +277,7 @@
 										<img src="../imgs/thumb02.jpg" alt="프로필사진">
 									</div>
 									<div class="detail">
-										<div class="id">${following.nickname}</div>
+										<div class="id"><a class="decoration_none" href="/userCtrl/profile?email=${following.email }">${following.nickname}</a></div>
 										<div class="time">1시간 전</div>
 									</div>
 								</div>
@@ -361,6 +315,6 @@
 		</section>
 	</section>
 
-	<script src="../js/main.js"></script>
+	<script src="../js/list.js"></script>
 </body>
 </html>

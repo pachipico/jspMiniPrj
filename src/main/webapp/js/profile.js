@@ -22,8 +22,9 @@ function openCity(e){
         taps[1].classList.add('on');
         
     }
-    
 }
 
-
 tapContainer.addEventListener('click', openCity);
+
+let uvo = "<%=uvo%>";
+console.log(uvo);

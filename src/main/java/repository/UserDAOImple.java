@@ -101,4 +101,23 @@ public class UserDAOImple implements UserDAO {
 		return sql.selectList(ns + "selectListByEmail", csv);
 	}
 
+	@Override
+	public int updatePwd(UserVO uvo) {
+		int isUp = sql.update(ns + "modPwd", uvo);
+		if (isUp > 0) {
+			sql.commit();
+		}
+		return isUp;
+	}
+
+	@Override
+	public int updateAvatar(UserVO uvo) {
+		int isUp = sql.update(ns + "modAvatar", uvo);
+		if (isUp > 0) {
+			sql.commit();
+		}
+		return isUp;
+	}
+
+
 }

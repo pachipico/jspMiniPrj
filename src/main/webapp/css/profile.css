@@ -1,5 +1,4 @@
 
-
 .hori_cont{
     display: flex;
     margin-bottom: 30px;
@@ -44,15 +43,15 @@
 }
 
 .detail .top > a{
-    height: 25px;
+    height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 120px;
+    width: 110px;
     border: 1px solid #dbdbdb;
     border-radius: 3px;
     color: #262626;
-    padding: 3px 20px;
+    padding: 5px 9px;
     font-weight: 600;
     vertical-align: text-bottom;
     text-decoration: none;

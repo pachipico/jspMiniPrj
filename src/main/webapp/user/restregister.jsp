@@ -15,9 +15,9 @@
 
                 <h1 class="sprite_insta_big_logo title"></h1>
 
-                <form action="/userCtrl/insert" method="POST">
+                <form action="/userCtrl/insertwithkakao" method="POST">
                     <p class="login_user_name">
-                        <input type="text" name="email" placeholder="이메일 주소">
+                        <input type="text" name="email" placeholder="이메일 주소" value="${email }" readonly>
                     </p>
                     
                     <p class="login_user_password">

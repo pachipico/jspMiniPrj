@@ -19,9 +19,6 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import domain.LikeVO;
 import domain.PostVO;
 import domain.UserVO;
@@ -66,8 +63,9 @@ public class PostController extends HttpServlet {
 		case "insert":
 			// 게시물 업로드
 			// 이후 리스트 페이지로
-			psv.register(
+			isUp = psv.register(
 					new PostVO(req.getParameter("writer"), req.getParameter("files"), req.getParameter("content")));
+			log.info("== insert {}", isUp>0 ? "success" : "fail");
 			req.getRequestDispatcher("/postCtrl/list").forward(req, res);
 			break;
 		case "list":
@@ -78,11 +76,16 @@ public class PostController extends HttpServlet {
 				limit = Integer.parseInt(req.getParameter("limit"));
 			}
 			HttpSession session = req.getSession();
+			if(session.getAttribute("ses") == null) {
+				res.sendRedirect("/userCtrl/login");
+			}
 			log.info("count : {}", psv.getCnt());
 			List<PostVO> postList = psv.getList(limit);
-			List<LikeVO> likeList = lsv.getList("123@123.com");
-
-			List<UserVO> followingList = usv.getFollowingList("abc@abc.com");// 세션 이메일 넣을것
+			UserVO uvo = (UserVO) session.getAttribute("ses");
+			
+			
+			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
+			List<UserVO> followingList = usv.getFollowingList(uvo.getEmail());// 세션 이메일 넣을것
 
 			req.setAttribute("likeList", likeList);
 			req.setAttribute("cnt", psv.getCnt());
@@ -148,7 +151,10 @@ public class PostController extends HttpServlet {
 			JSONParser parser2 = new JSONParser();
 			try {
 				JSONObject jsonObj = (JSONObject) parser2.parse(sb.toString());
-				lsv.like(new LikeVO((String) jsonObj.get("email"), Long.valueOf((String) jsonObj.get("pid"))));
+				isUp = lsv.like(new LikeVO((String) jsonObj.get("email"), Long.valueOf((String) jsonObj.get("pid"))));
+				if(isUp > 0) {
+					log.info("=== {} likes {}", jsonObj.get("email"), jsonObj.get("pid"));
+				}
 			} catch (ParseException e) {
 
 				e.printStackTrace();
@@ -168,7 +174,10 @@ public class PostController extends HttpServlet {
 			JSONParser parser3 = new JSONParser();
 			try {
 				JSONObject jsonObj2 = (JSONObject) parser3.parse(sb2.toString());
-				lsv.unLike(new LikeVO((String) jsonObj2.get("email"), Long.valueOf((String) jsonObj2.get("pid"))));
+				isUp = lsv.unLike(new LikeVO((String) jsonObj2.get("email"), Long.valueOf((String) jsonObj2.get("pid"))));
+				if(isUp > 0) {
+					log.info("=== {} unlikes {}", jsonObj2.get("email"), jsonObj2.get("pid"));
+				}
 			} catch (ParseException e) {
 
 				e.printStackTrace();

@@ -61,7 +61,6 @@ public class CommentController extends HttpServlet {
 				JSONParser parser = new JSONParser();
 				JSONObject jsonObj = (JSONObject) parser.parse(sb.toString());
 
-				System.out.println(jsonObj);
 				isUp = csv.register(new CommentVO((String)jsonObj.get("writer"),Long.valueOf(String.valueOf(jsonObj.get("pid"))), (String)jsonObj.get("content")));
 				log.info(">>> comment register : {}", isUp > 0 ? "success" : "fail");
 				PrintWriter out = res.getWriter();
