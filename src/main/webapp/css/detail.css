@@ -91,7 +91,7 @@ body {
 
 .content_area {
   display: flex;
-  flex-grow:1;  
+  flex-grow: 1;
   font-size: 1.5em;
   flex-direction: column;
 }
@@ -120,8 +120,8 @@ body {
   flex-grow: 1;
 }
 
-.scroll_div{
-	overflow:hidden;
+.scroll_div {
+  overflow: hidden;
 }
 
 .cmt_writer_area,
@@ -129,6 +129,24 @@ body {
   display: flex;
   justify-content: space-between;
   font-size: 0.75em;
+}
+.cmt_input {
+  position: relative;
+  bottom: 0;
+}
+
+form.cmt_input_form {
+  display: flex;
+}
+
+input#input_content {
+  flex-grow: 1;
+  height: 25px;
+}
+
+form button#submitBtn {
+  border: none;
+  background-color: #fff;
 }
 
 .htag {

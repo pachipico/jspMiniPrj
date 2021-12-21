@@ -1,9 +1,13 @@
 package controller;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,15 +17,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+
+import domain.CommentVO;
 import domain.LikeVO;
 import domain.PostVO;
 import domain.UserVO;
+import net.coobird.thumbnailator.Thumbnails;
 import service.CommentService;
 import service.CommentServiceImple;
 import service.LikeService;
@@ -63,44 +75,107 @@ public class PostController extends HttpServlet {
 		case "insert":
 			// 게시물 업로드
 			// 이후 리스트 페이지로
-			isUp = psv.register(
-					new PostVO(req.getParameter("writer"), req.getParameter("files"), req.getParameter("content")));
-			log.info("== insert {}", isUp>0 ? "success" : "fail");
+			try {
+				String savePath = getServletContext().getRealPath("/_postImgUpload");
+				File fileDir = new File(savePath);
+
+				DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
+				fileItemFactory.setRepository(fileDir);
+				fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 저장을 위한 임시 메모리 저장용량 Byte단위
+				ServletFileUpload fileUpload = new ServletFileUpload(fileItemFactory);
+				PostVO pvo = new PostVO();
+				List<FileItem> itemList = fileUpload.parseRequest(req);
+				log.info("itemList {}", itemList);
+				for (FileItem item : itemList) {
+					switch (item.getFieldName()) {
+					case "content":
+						log.info("content: {}", item.getString("utf-8"));
+						pvo.setContent(item.getString("utf-8"));
+						break;
+					case "writer":
+						log.info("writer: {}", item.getString("utf-8"));
+						pvo.setWriter(item.getString("utf-8"));
+						break;
+					case "imgFile":
+						if (item.getSize() > 0) {
+							String fileName = item.getName().substring(item.getName().lastIndexOf(File.separator) + 1);
+							fileName = System.currentTimeMillis() + "-" + fileName;
+							File uploadFilePath = new File(fileDir + File.separator + fileName);
+							log.info("===upload path : {}", uploadFilePath);
+
+							try {
+								item.write(uploadFilePath);
+								pvo.setFiles(fileName);
+								Thumbnails.of(uploadFilePath).size(120, 120)
+										.toFile(new File(fileDir + File.separator + "th_" + fileName));
+							} catch (Exception e) {
+								log.info("upload failed");
+								e.printStackTrace();
+							}
+
+						}
+						break;
+					default:
+						break;
+					}
+				}
+//				isUp = psv.register(
+//						new PostVO(req.getParameter("writer"), req.getParameter("files"), req.getParameter("content")));
+				log.info("===pvo :{}", pvo);
+				isUp = psv.register(pvo);
+				
+				log.info("== insert {}", isUp > 0 ? "success" : "fail");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			req.getRequestDispatcher("/postCtrl/list").forward(req, res);
 			break;
 		case "list":
 			// 일단은 최신 순서대로 보여주고 구현이 완료되면 팔로우한 계정의 게시물을 보여줄 예정
 			// 세션이 있다면 여기가 홈 화면이 됨.
+
+			HttpSession session = req.getSession();
+			if (session.getAttribute("ses") == null) {
+				res.sendRedirect("/userCtrl/login");
+			}
+			log.info("count : {}", psv.getCnt());
+			List<PostVO> postList = psv.getList(10);
+			UserVO uvo = (UserVO) session.getAttribute("ses");
+
+			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
+			List<UserVO> followingList = usv.getFollowingList(uvo.getEmail());// 세션 이메일 넣을것
+			req.setAttribute("likeList", likeList);
+			req.setAttribute("cnt", psv.getCnt());
+			req.setAttribute("limit", 10);
+			req.setAttribute("postList", postList);
+			req.setAttribute("followingList", followingList);
+			for (PostVO pvo : postList) {
+				req.setAttribute("cmt" + pvo.getPostId(), csv.getList(pvo.getPostId()));
+			}
+
+			req.getRequestDispatcher("/post/list.jsp").forward(req, res);
+
+			break;
+		case "getList":
+			// 인기가 많은 게시물들
 			int limit = 5;
 			if (req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
 				limit = Integer.parseInt(req.getParameter("limit"));
 			}
-			HttpSession session = req.getSession();
-			if(session.getAttribute("ses") == null) {
-				res.sendRedirect("/userCtrl/login");
-			}
-			log.info("count : {}", psv.getCnt());
-			List<PostVO> postList = psv.getList(limit);
-			UserVO uvo = (UserVO) session.getAttribute("ses");
-			
-			
-			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
-			List<UserVO> followingList = usv.getFollowingList(uvo.getEmail());// 세션 이메일 넣을것
+			List<PostVO> posts = psv.getList(limit);
 
-			req.setAttribute("likeList", likeList);
-			req.setAttribute("cnt", psv.getCnt());
-			req.setAttribute("limit", limit);
-			req.setAttribute("postList", postList);
-			req.setAttribute("followingList", followingList);
-			int n = 0;
-			for (PostVO post : postList) {
-				req.setAttribute("cmt" + post.getPostId(), csv.getList(post.getPostId()));
+			Gson gson = new Gson();
+			JSONArray data = new JSONArray();
+			for (PostVO p : posts) {
+				JSONObject post = new JSONObject();
+				post.put("postData", p);
+				post.put("comments", csv.getList(p.getPostId()));
+				post.put("likeList", lsv.getList(p.getWriter()));
+				data.add(post);
 			}
-			req.getRequestDispatcher("/post/list.jsp").forward(req, res);
 
-			break;
-		case "listall":
-			// 인기가 많은 게시물들
+			PrintWriter out = res.getWriter();
+			out.print(gson.toJson(data));
 			break;
 		case "mylist":
 			// 내 게시물
@@ -120,9 +195,9 @@ public class PostController extends HttpServlet {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("content", pvo.getContent());
 			jsonObject.put("pid", pvo.getPostId());
-			PrintWriter out = res.getWriter();
+			PrintWriter out1 = res.getWriter();
 			System.out.println(jsonObject);
-			out.print(jsonObject);
+			out1.print(jsonObject);
 
 			break;
 		case "update":
@@ -152,7 +227,7 @@ public class PostController extends HttpServlet {
 			try {
 				JSONObject jsonObj = (JSONObject) parser2.parse(sb.toString());
 				isUp = lsv.like(new LikeVO((String) jsonObj.get("email"), Long.valueOf((String) jsonObj.get("pid"))));
-				if(isUp > 0) {
+				if (isUp > 0) {
 					log.info("=== {} likes {}", jsonObj.get("email"), jsonObj.get("pid"));
 				}
 			} catch (ParseException e) {
@@ -174,8 +249,9 @@ public class PostController extends HttpServlet {
 			JSONParser parser3 = new JSONParser();
 			try {
 				JSONObject jsonObj2 = (JSONObject) parser3.parse(sb2.toString());
-				isUp = lsv.unLike(new LikeVO((String) jsonObj2.get("email"), Long.valueOf((String) jsonObj2.get("pid"))));
-				if(isUp > 0) {
+				isUp = lsv
+						.unLike(new LikeVO((String) jsonObj2.get("email"), Long.valueOf((String) jsonObj2.get("pid"))));
+				if (isUp > 0) {
 					log.info("=== {} unlikes {}", jsonObj2.get("email"), jsonObj2.get("pid"));
 				}
 			} catch (ParseException e) {

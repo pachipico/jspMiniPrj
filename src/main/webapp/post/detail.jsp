@@ -52,27 +52,35 @@ uri="http://java.sun.com/jsp/jstl/core" %>
             <button id="back_btn">&lt;&nbsp;이전</button>
           </div>
         </div>
+        <span> 댓글</span>
         <div class="cmt_area">
-          <span> 댓글</span>
           <div class="scroll_div">
-          <c:forEach items="${cvoList }" var="cvo">
-            <div class="cmt ">
-              <div class="cmt_img">
-                <img class="avatar" src="https://picsum.photos/25/25/" alt="" />
-              </div>
-              <div class="cmt_text">
-                <div class="cmt_writer_area">
-                  <div>
-                    <span class="cmt_writer_nickname">${cvo.writer }</span>
-                    <span class="cmt_writer_email">${cvo.writer }</span>
-                  </div>
-                  <span class="cmt_write_time">9분전</span>
+            <c:forEach items="${cvoList }" var="cvo">
+              <div class="cmt">
+                <div class="cmt_img">
+                  <img class="avatar" src="https://picsum.photos/25/25/" alt="" />
                 </div>
-                <div class="cmt_content">${cvo.content }</div>
+                <div class="cmt_text">
+                  <div class="cmt_writer_area">
+                    <div>
+                      <span class="cmt_writer_nickname">${cvo.writer }</span>
+                      <span class="cmt_writer_email">${cvo.writer }</span>
+                    </div>
+                    <span class="cmt_write_time">9분전</span>
+                  </div>
+                  <div class="cmt_content">${cvo.content }</div>
+                </div>
               </div>
-            </div>
-          </c:forEach>
+            </c:forEach>
           </div>
+        </div>
+        <div class="cmt_input">
+          <form action="/cmtCtrl/post" method="post" class="cmt_input_form">
+            <input type="hidden" name="writer" value="${ses.email}" />
+            <input type="hidden" name="pid" value="${pvo.postId}" />
+            <input type="text" name="content" id="input_content" />
+            <button type="submit" id="submitBtn">게시</button>
+          </form>
         </div>
       </div>
     </div>

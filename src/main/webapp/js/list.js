@@ -8,6 +8,12 @@ let likeBtn = document.querySelectorAll("#likeBtn");
 let followBtn = document.querySelectorAll("input.follow");
 let limit = 5;
 
+const getData = async () => {
+  const res = await fetch("/postCtrl/getList");
+  const result = await res.json();
+  return result;
+};
+
 const commentArea = document.getElementById("comment_area");
 console.log(`userSession: ${userSession}`);
 const deleteRequest = async (pid) => {
@@ -82,46 +88,51 @@ const unlikePost = async (pid, email) => {
 };
 
 const follow = async (email) => {
-  const config = {
+  config = {
     method: "POST",
-    body: {
-      from: userSession,
-      to: email,
-    },
   };
-  try {
-    const res = await fetch("/userCtrl/follow", config);
-    return res.text();
-  } catch (e) {
-    console.log(e);
-  }
+  await fetch(`/userCtrl/follow?from=${userSession}&to=${email}`, config);
+};
+// follow & unfollow 구현
+const unFollow = async (email) => {
+  config = {
+    method: "POST",
+  };
+  fetch(`/userCtrl/unfollow?from=${userSession}&to=${email}`, config);
 };
 
-const unFollow = async (email) => {
-  const config = {
-    method: "POST",
-    body: {
-      from: userSession,
-      to: email,
-    },
-  };
-  try {
-    const res = await fetch("/userCtrl/unfollow", config);
-    return res.text();
-  } catch (e) {
-    console.log(e);
+const updateFollowerList = (text, email) => {
+  const followingList = document.querySelector("div#followingList");
+  if (text == "follow") {
+    followingList.innerHTML =
+      followingList.innerHTML +
+      `<div class="thumb_user" data-followuser ="${email}">
+									<div class="profile_thumb">
+										<img src="../imgs/thumb02.jpg" alt="프로필사진">
+									</div>
+									<div class="detail">
+										<div class="id"><a class="decoration_none" href="/userCtrl/profile?email=${email}">${email}</a></div>
+										<div class="time">1시간 전</div>
+									</div>
+								</div>`;
+  } else {
+    console.log(document.querySelector(`[data-followuser="${email}"]`));
+    document.querySelector(`[data-followuser="${email}"]`).remove();
   }
 };
 
 [].forEach.call(followBtn, (followBtn) => {
-  let email = followBtn.dataset.fEmail;
+  let email = followBtn.dataset.email;
   followBtn.addEventListener("click", () => {
+    console.log(email);
     if (followBtn.value == "팔로우") {
       followBtn.value = "언팔로우";
       follow(email);
+      updateFollowerList("follow", email);
     } else {
       followBtn.value = "팔로우";
       unFollow(email);
+      updateFollowerList("unfollow", email);
     }
   });
 });

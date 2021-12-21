@@ -78,7 +78,8 @@
 			<!-- 세션 이메일 -->
 			<input type="hidden" id="userSession" name="userSession" value="${ses.email }">
 				<!-- 게시물 반복 시작 -->
-				<c:forEach items="${postList }" var="post" begin="0" end="${limit }">
+				<div id="postList">
+				< <c:forEach items="${postList }" var="post" begin="0" end="${limit }">
 						<div class="contents_box" id="post${post.postId }">
 							<article class="contents">
 								<header class="top">
@@ -109,7 +110,7 @@
 													</c:if>
 												</c:forEach>
 											<li><input type="submit" class="follow" value="${text}"
-												data-fEmail="${post.writer }"></li>
+												data-email="${post.writer }"></li>
 											</c:otherwise>
 										</c:choose> 
 											
@@ -138,8 +139,7 @@
 												<c:set var="heart" value="bi-heart-fill red" />
 												</c:if>
 											</c:forEach>
-											<div class="bi ${heart } icon" name="39"
-												data-pid="${post.postId }" ></div>
+											<div class="bi ${heart } icon" name="39" data-pid="${post.postId }" ></div>
 												</a>
 										</div>
 										<div class="sprite_bubble_icon"></div>
@@ -179,7 +179,8 @@
 								</div>
 							</article>
 						</div>
-				</c:forEach>
+				</c:forEach> 
+				</div>
 				<c:if test="${cnt >= limit }">
 				<a href="/postCtrl/list?limit=10" id="getMore">게시글 더보기</a>
 				</c:if>
@@ -198,8 +199,9 @@
 
 							<!-- Modal body -->
 							<div class="modal-body">
-								<form action="/postCtrl/insert" method="post">
-									<input type="text" name="content"> 
+								<form action="/postCtrl/insert" method="post" enctype="multipart/form-data">
+									<input type="file" name="imgFile" value="">
+									<input type="text" name="content" value=""> 
 									<input type="text"
 										name="writer" value="${ses.email }">
 									<button type="submit" >submit</button>
@@ -230,9 +232,10 @@
 
 							<!-- Modal body -->
 							<div class="modal-body">
-								<form action="/postCtrl/update" method="post">
+								<form action="/postCtrl/update" method="post" enctype="multipart/form-data">
+									<input type="file" name="imgFile" value="" accept="image/x-png,image/gif,image/jpeg">
 									<input type="hidden" name="pid" id="updatePid" value="" >
-									<input type="text" name="content" id="updateContent" "> 
+									<input type="text" name="content" id="updateContent" value=""> 
 									<input type="text"
 										name="writer" value="${ses.email }">
 									<button type="submit" >submit</button>
@@ -269,15 +272,15 @@
 							<div class="more">모두 보기</div>
 						</header>
 
-						<div class="scroll_inner">
+						<div class="scroll_inner" id="followingList">
 
 							<c:forEach items="${followingList }" var="following">
-								<div class="thumb_user">
+								<div class="thumb_user" data-followuser="${following.email }">
 									<div class="profile_thumb">
 										<img src="../imgs/thumb02.jpg" alt="프로필사진">
 									</div>
 									<div class="detail">
-										<div class="id"><a class="decoration_none" href="/userCtrl/profile?email=${following.email }">${following.nickname}</a></div>
+										<div class="id"><a class="decoration_none" href="/userCtrl/profile?email=${following.email }">${following.email}</a></div>
 										<div class="time">1시간 전</div>
 									</div>
 								</div>
