@@ -5,8 +5,7 @@ const handleCloseBtnClick = () => {
   history.back();
 };
 
-const handleSubmitBtnClick = async (e) => {
-  e.preventDefault();
+const handleSubmitBtnClick = async () => {
   const cvo = {
     pid: document.querySelector("[name='pid']").value,
     writer: document.querySelector("[name='writer']").value,
@@ -46,6 +45,7 @@ const addToList = () => {
 
 closeBtn.addEventListener("click", handleCloseBtnClick);
 submitBtn.addEventListener("click", (e) => {
-  handleCloseBtnClick(e);
+  e.preventDefault();
+  handleSubmitBtnClick();
   addToList();
 });

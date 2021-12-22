@@ -21,7 +21,7 @@ from post p  right join comment c
 on p.post_id = c.post_id
 ) cmt
 on post.post_id  = cmt.post_id -->
-select p.post_id, p.writer, count(l.email) like_cnt, p.content, p.mod_at, p.read_cnt
+select p.post_id, p.writer, count(l.email) like_cnt, p.content,p.files, p.mod_at, p.read_cnt
 from post p left join `like` l on p.post_id  = l.post_id 
 GROUP BY p.post_id 
 limit 0, #{limit}

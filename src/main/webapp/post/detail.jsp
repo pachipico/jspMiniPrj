@@ -75,12 +75,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           </div>
         </div>
         <div class="cmt_input">
-          <form action="/cmtCtrl/post" method="post" class="cmt_input_form">
             <input type="hidden" name="writer" value="${ses.email}" />
             <input type="hidden" name="pid" value="${pvo.postId}" />
             <input type="text" name="content" id="input_content" />
             <button type="submit" id="submitBtn">게시</button>
-          </form>
         </div>
       </div>
     </div>
