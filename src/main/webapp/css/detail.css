@@ -81,6 +81,19 @@ body {
   padding: 3px;
 }
 
+.cyan {
+	color: #8edcde;
+}
+
+img#post_img{
+	width:100%;
+}
+img.avatar{
+	width:25px;
+	height: 25px;
+	border-radius:12px;
+}
+
 .avatar {
   border-radius: 12px;
 }
@@ -132,11 +145,8 @@ body {
 }
 .cmt_input {
   position: relative;
-  bottom: 0;
-}
-
-form.cmt_input_form {
   display: flex;
+  bottom: 0;
 }
 
 input#input_content {
@@ -144,9 +154,10 @@ input#input_content {
   height: 25px;
 }
 
-form button#submitBtn {
+button#submitBtn {
   border: none;
   background-color: #fff;
+  color: #7db2f4;
 }
 
 .htag {

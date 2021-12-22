@@ -9,7 +9,8 @@
 	</insert>
 	
 	<select id="list" parameterType="string" resultType="lvo" >
-		select post_id from `like` where email = #{email}
+		select l.post_id , u.avatar from `like` l left join user u on l.email = u.email
+		 where l.email = #{email}
 	</select>
 	
 	<delete id="unlike" parameterType="lvo">

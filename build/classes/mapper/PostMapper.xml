@@ -21,12 +21,18 @@ from post p  right join comment c
 on p.post_id = c.post_id
 ) cmt
 on post.post_id  = cmt.post_id -->
-select p.post_id, p.writer, count(l.email) like_cnt, p.content,p.files, p.mod_at, p.read_cnt
-from post p left join `like` l on p.post_id  = l.post_id 
+<!-- select p.post_id, p.writer, count(l.email) like_cnt, p.content,p.files, p.mod_at, p.read_cnt, u.avatar
+from post p left join `like` l on p.post_id  = l.post_id left join user u on p.writer = u.email
 GROUP BY p.post_id 
+order by p.reg_at desc
 limit 0, #{limit}
-;
+; -->
 
+select p.post_id, p.writer, count(l.email) like_cnt, p.content,p.files, p.mod_at, p.read_cnt, u.avatar 
+from post p left join `like` l on p.post_id  = l.post_id left join user u on p.writer = u.email 
+GROUP BY p.post_id 
+order by p.reg_at desc
+limit 0, #{limit}
 	</select>
 	
 	<select id="cnt" resultType="int">
@@ -34,10 +40,11 @@ limit 0, #{limit}
 	</select>
 
 	<select id="one" parameterType="long" resultType="pvo">
-		select p.post_id, writer, reg_at, mod_at, read_cnt, files, content,
-		count(l.email) as like_cnt
-		from post p left join `like` l on p.post_id = l.post_id where p.post_id =
-		#{postId} group by p.post_id
+		select p.post_id, p.writer, p.reg_at, p.mod_at, p.read_cnt, p.files, p.content,
+		count(l.email) as like_cnt, u.avatar
+		from post p left join `like` l on p.post_id = l.post_id left join user u on p.writer = u.email where p.post_id =
+		#{postId} 
+		 group by p.post_id
 	</select>
 
 	<update id="addCnt" parameterType="long">

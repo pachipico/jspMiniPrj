@@ -12,7 +12,16 @@ public class PostVO {
 	private String content;
 	private String cmtWriter;
 	private String cmtContent;
+	private String avatar;
 	
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
 	public PostVO() {
 	}
 

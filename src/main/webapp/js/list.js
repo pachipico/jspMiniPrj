@@ -6,6 +6,10 @@ let updatePostBtn = document.querySelectorAll("#updatePost");
 let commentField = document.querySelectorAll("div .comment_field");
 let likeBtn = document.querySelectorAll("#likeBtn");
 let followBtn = document.querySelectorAll("input.follow");
+let registerImgFile = document.querySelector("#registerImgFile");
+let registerImgView = document.querySelector("#registerImgView");
+let updateImgFile = document.querySelector("#updateImgFile");
+let updateImgView = document.querySelector("#updateImgView");
 let limit = 5;
 
 const getData = async () => {
@@ -121,6 +125,26 @@ const updateFollowerList = (text, email) => {
   }
 };
 
+const changeRegisterView = (input) => {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      registerImgView.src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+};
+const changeUpdateView = (input) => {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      updateImgView.src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+};
+registerImgFile.addEventListener("change", (e) => changeRegisterView(e.target));
+updateImgFile.addEventListener("change", (e) => changeUpdateView(e.target));
 [].forEach.call(followBtn, (followBtn) => {
   let email = followBtn.dataset.email;
   followBtn.addEventListener("click", () => {
@@ -186,8 +210,11 @@ const updateFollowerList = (text, email) => {
         return result.json();
       })
       .then((result) => {
+        console.log(result);
         document.querySelector("#updateContent").value = result.content;
         document.querySelector("#updatePid").value = result.pid;
+        document.querySelector("#prevImgFile").value = result.imgFile;
+        document.querySelector("#updateImgView").src = `../_postImgUpload/${result.imgFile}`;
       });
   });
 });

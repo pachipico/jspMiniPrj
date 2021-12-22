@@ -22,6 +22,18 @@ const handleSubmitBtnClick = async () => {
   return response;
 };
 
+const getHashTags = (str) => {
+  let tags = [];
+  let str_ = str;
+  while (str_.contains("#")) {
+    str_.substring(str_.indexOf("#"), str_.indexOf(" ", str_.indexOf("#")));
+    console.log(str_.substring(str_.indexOf("#"), str_.indexOf(" ", str_.indexOf("#"))));
+    tags.append(str_.match(/#[a-z]+/, ""));
+    str_.replace(/#[a-z]+/, "");
+  }
+  return str_;
+};
+
 const addToList = () => {
   document.querySelector("div.scroll_div").innerHTML =
     ` <div class="cmt">

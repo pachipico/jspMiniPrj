@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.ibatis.javassist.expr.NewArray;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,11 +30,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
-import domain.CommentVO;
 import domain.LikeVO;
 import domain.PostVO;
 import domain.UserVO;
-import net.coobird.thumbnailator.Thumbnails;
 import service.CommentService;
 import service.CommentServiceImple;
 import service.LikeService;
@@ -106,8 +105,7 @@ public class PostController extends HttpServlet {
 							try {
 								item.write(uploadFilePath);
 								pvo.setFiles(fileName);
-								Thumbnails.of(uploadFilePath).size(120, 120)
-										.toFile(new File(fileDir + File.separator + "th_" + fileName));
+
 							} catch (Exception e) {
 								log.info("upload failed");
 								e.printStackTrace();
@@ -123,7 +121,7 @@ public class PostController extends HttpServlet {
 //						new PostVO(req.getParameter("writer"), req.getParameter("files"), req.getParameter("content")));
 				log.info("===pvo :{}", pvo);
 				isUp = psv.register(pvo);
-				
+
 				log.info("== insert {}", isUp > 0 ? "success" : "fail");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -139,14 +137,19 @@ public class PostController extends HttpServlet {
 				res.sendRedirect("/userCtrl/login");
 			}
 			log.info("count : {}", psv.getCnt());
-			List<PostVO> postList = psv.getList(10);
+			int limit = 5;
+			if (req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
+				limit = Integer.parseInt(req.getParameter("limit"));
+			}
+			log.info("limit: {}", limit);
+			List<PostVO> postList = psv.getList(limit);
 			UserVO uvo = (UserVO) session.getAttribute("ses");
 
 			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
 			List<UserVO> followingList = usv.getFollowingList(uvo.getEmail());// 세션 이메일 넣을것
 			req.setAttribute("likeList", likeList);
 			req.setAttribute("cnt", psv.getCnt());
-			req.setAttribute("limit", 10);
+			req.setAttribute("limit", limit);
 			req.setAttribute("postList", postList);
 			req.setAttribute("followingList", followingList);
 			for (PostVO pvo : postList) {
@@ -158,11 +161,11 @@ public class PostController extends HttpServlet {
 			break;
 		case "getList":
 			// 인기가 많은 게시물들
-			int limit = 5;
+			int limit1 = 5;
 			if (req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
 				limit = Integer.parseInt(req.getParameter("limit"));
 			}
-			List<PostVO> posts = psv.getList(limit);
+			List<PostVO> posts = psv.getList(limit1);
 
 			Gson gson = new Gson();
 			JSONArray data = new JSONArray();
@@ -184,7 +187,21 @@ public class PostController extends HttpServlet {
 		case "detail":
 			// 게시물의 디테일로 이동
 			Long pid = Long.parseLong(req.getParameter("pid"));
-			req.setAttribute("pvo", psv.getDetailAndUp(pid));
+			PostVO post =  psv.getDetailAndUp(pid);
+			String str = post.getContent();
+			List<String> tags = new ArrayList<>();
+			log.info("content: {}", str);
+			Pattern pattern = Pattern.compile("(#[ㄱ-힣A-Za-z0-9-_]+)(?:#[A-Za-z0-9가-힣-_]+)*\\b");
+			Matcher matcher = pattern.matcher(str);
+			
+			while (matcher.find()){
+				String tag = matcher.group(1);
+				tags.add(tag);
+			} 
+			
+			req.setAttribute("pvo",post);
+			req.setAttribute("content", matcher.replaceAll(""));
+			req.setAttribute("hashtags", tags);
 			req.setAttribute("cvoList", csv.getList(pid));
 			req.getRequestDispatcher("/post/detail.jsp").forward(req, res);
 			break;
@@ -195,6 +212,7 @@ public class PostController extends HttpServlet {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("content", pvo.getContent());
 			jsonObject.put("pid", pvo.getPostId());
+			jsonObject.put("imgFile", pvo.getFiles());
 			PrintWriter out1 = res.getWriter();
 			System.out.println(jsonObject);
 			out1.print(jsonObject);
@@ -203,8 +221,76 @@ public class PostController extends HttpServlet {
 		case "update":
 			// 게시물 수정
 			// 이후 내 게시물로 이동
-			isUp = psv.modify(new PostVO(Long.parseLong(req.getParameter("pid")), null, req.getParameter("content")));
-			log.info(">>> update {}", isUp > 0 ? "success" : "fail");
+			PostVO pvo2 = new PostVO();
+			try {
+				String savePath = getServletContext().getRealPath("/_postImgUpload");
+				File fileDir = new File(savePath);
+				String prevFile = "";
+				DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
+				fileItemFactory.setRepository(fileDir);
+				fileItemFactory.setSizeThreshold(1 * 1024 * 1024); // 저장을 위한 임시 메모리 저장용량 Byte단위
+				ServletFileUpload fileUpload = new ServletFileUpload(fileItemFactory);
+				List<FileItem> itemList = fileUpload.parseRequest(req);
+				for (FileItem item : itemList) {
+					switch (item.getFieldName()) {
+					case "content":
+						pvo2.setContent(item.getString("utf-8"));
+						break;
+					case "writer":
+						pvo2.setWriter(item.getString("utf-8"));
+						break;
+
+					case "prevImgFile":
+						pvo2.setFiles(item.getString("utf-8"));
+						prevFile = pvo2.getFiles();
+						
+						break;
+					case "pid":
+						pvo2.setPostId(Long.parseLong(item.getString("utf-8")));
+						break;
+					case "imgFile":
+
+						if (item.getSize() > 0) {
+
+							String fileName = item.getName().substring(item.getName().lastIndexOf(File.separator) + 1);
+							File removeFile = new File(fileDir + File.separator + prevFile);
+							boolean rm = false;
+							if(removeFile.exists()) {
+								rm = removeFile.delete();
+							}
+							
+							log.info(">>> profileImg delete {}", rm ? "Success" : "Fail");
+							fileName = System.currentTimeMillis() + "-" + fileName;
+							File uploadFilePath = new File(fileDir + File.separator + fileName);
+							try {
+								item.write(uploadFilePath);
+								pvo2.setFiles(fileName);
+
+							} catch (Exception e) {
+								log.info("upload failed");
+								e.printStackTrace();
+							}
+
+						}
+						break;
+					default:
+						break;
+					}
+				}
+//				log.info("prevFil = {}", prevFile);
+//				if(pvo2.getFiles().length() > 0 && prevFile.length() > 0) {
+//					File removeFile = new File(fileDir + File.separator + prevFile);
+//					boolean rm = true;
+//					if (removeFile.exists()) {
+//						rm = removeFile.delete();
+//					}
+//					log.info(">>> profileImg delete {}", rm ? "Success" : "Fail");
+//				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			isUp = psv.modify(pvo2);
+			log.info("==update {}", isUp > 0 ? "success" : "failed");
 			res.sendRedirect("/postCtrl/list");
 			break;
 		case "remove":

@@ -1,20 +1,15 @@
-import com.google.gson.Gson;
-
-import service.CommentService;
-import service.CommentServiceImple;
-import service.PostService;
-import service.PostServiceImple;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Program {
 
 
 	public static void main(String[] args) {
-		PostService psv = new PostServiceImple();
-		CommentService csv = new CommentServiceImple();
 		
-		Gson gson = new Gson();
-		
-		System.out.println(gson.toJson(psv.getList(10)));
-		
+		Pattern pattern = Pattern.compile("(#[A-Za-z0-9-_]+)(?:#[A-Za-z0-9-_]+)*\\b");
+		Matcher matcher = pattern.matcher(s);
+		while (matcher.find()){
+		    System.out.println(matcher.group(1)); 
+		} 
 	}
 }

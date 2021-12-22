@@ -114,14 +114,6 @@ body{
     font-size: 14px;
 }
 
-.icon{
-	font-size: 27px;
-	color:#7a7a7a;
-}
-.red{
-	color: red;
-}
-
 
 #header .search_box .fake_field{
     position: absolute;
@@ -528,6 +520,16 @@ body{
 
 }
 
+img#updateImgView, img#registerImgView{
+	width: 100%;
+}
+.icon{
+	font-size: 27px;
+	color:#7a7a7a;
+}
+.red{
+	color: red;
+}
 
 
 
