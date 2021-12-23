@@ -14,7 +14,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
   </head>
   <body>
     <div class="container">
-      <a class="close_btn" id="close_btn">X</a>
+      <a class="close_btn" id="close_btn">x</a>
       <div class="left_container">
       	<c:choose>
           	<c:when test="${empty pvo.files }">
@@ -39,7 +39,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                 <span class="cmt_writer_nickname">${pvo.writer }</span>
                 <span class="cmt_writer_email cyan">${pvo.writer }</span>
               </div>
-              <span class="cmt_write_time cyan">${pvo.modAt }</span>
+              <c:set value="${pvo.modAt == pvo.regAt ? '' : '수정됨' }" var="txt" />
+              <div>
+             <span class="timmer cyan">${pvo.modAt }</span><span class="cyan"> ${txt}</span>
+             </div>
             </div>
           </div>
         </div>
@@ -75,7 +78,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                       <span class="cmt_writer_nickname">${cvo.writer }</span>
                       <span class="cmt_writer_email cyan">${cvo.writer }</span>
                     </div>
-                    <span class="cmt_write_time cyan">9분전</span>
+                    <span class="timmer cyan">${cvo.regAt}</span>
                   </div>
                   <div class="cmt_content">${cvo.content }</div>
                 </div>

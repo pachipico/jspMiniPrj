@@ -6,7 +6,7 @@ import domain.PostVO;
 
 public interface PostDAO {
 	public int insert(PostVO pvo);
-	public List<PostVO> selectList(int limit);
+	public List<PostVO> selectList(int page);
 	public PostVO selectOne(long postId);
 	public int selectCnt();
 	public int update(PostVO pvo);

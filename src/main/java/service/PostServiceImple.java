@@ -23,9 +23,9 @@ public class PostServiceImple implements PostService {
 	}
 
 	@Override
-	public List<PostVO> getList(int limit) {
+	public List<PostVO> getList(int page) {
 
-		return pdao.selectList(limit);
+		return pdao.selectList(page);
 	}
 	
 	

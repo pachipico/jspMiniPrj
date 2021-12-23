@@ -137,19 +137,18 @@ public class PostController extends HttpServlet {
 				res.sendRedirect("/userCtrl/login");
 			}
 			log.info("count : {}", psv.getCnt());
-			int limit = 5;
-			if (req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
-				limit = Integer.parseInt(req.getParameter("limit"));
+			int page = 1;
+			if (req.getParameter("page") != null && !req.getParameter("page").equals("")) {
+				page = Integer.parseInt(req.getParameter("page"));
 			}
-			log.info("limit: {}", limit);
-			List<PostVO> postList = psv.getList(limit);
+			log.info("page: {}", page);
+			List<PostVO> postList = psv.getList(page*5);
 			UserVO uvo = (UserVO) session.getAttribute("ses");
 
 			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
 			List<UserVO> followingList = usv.getFollowingList(uvo.getEmail());// 세션 이메일 넣을것
 			req.setAttribute("likeList", likeList);
 			req.setAttribute("cnt", psv.getCnt());
-			req.setAttribute("limit", limit);
 			req.setAttribute("postList", postList);
 			req.setAttribute("followingList", followingList);
 			for (PostVO pvo : postList) {
@@ -163,7 +162,7 @@ public class PostController extends HttpServlet {
 			// 인기가 많은 게시물들
 			int limit1 = 5;
 			if (req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
-				limit = Integer.parseInt(req.getParameter("limit"));
+				limit1 = Integer.parseInt(req.getParameter("limit"));
 			}
 			List<PostVO> posts = psv.getList(limit1);
 

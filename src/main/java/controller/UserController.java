@@ -54,7 +54,7 @@ public class UserController extends HttpServlet {
 
 		String uri = req.getRequestURI();
 		String path = uri.substring(uri.lastIndexOf("/") + 1);
-
+		log.info("userCtrl");
 		// 세션에 유저가 없으면 로그인페이지로
 		switch (path) {
 		case "kakaologin":
@@ -298,6 +298,7 @@ public class UserController extends HttpServlet {
 			}
 			break;
 		case "login":
+			System.out.println("asfnsk");
 			uvo = usv.logIn(new UserVO(req.getParameter("email"), req.getParameter("pwd")));
 			if (uvo != null) {
 				HttpSession ses = req.getSession();

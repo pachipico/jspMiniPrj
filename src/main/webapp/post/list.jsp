@@ -83,7 +83,7 @@
 			<c:if test="${empty postList }">
 				<h2>게시글이 없습니다.</h2>
 			</c:if>
-			<c:forEach items="${postList }" var="post" begin="0" end="${limit }">
+			<c:forEach items="${postList }" var="post">
 				<div class="contents_box" id="post${post.postId }">
 					<article class="contents">
 						<header class="top" style="width: 614px;">
@@ -98,7 +98,8 @@
 										<a class="decoration_none"
 											href="/userCtrl/profile?email=${post.writer }">${post.writer }</a>
 									</div>
-									<div class="country s_text">Seoul, South Korea</div>
+									<div class="country s_text">Seoul, South Korea
+										${post.postId }</div>
 								</div>
 
 							</div>
@@ -189,7 +190,8 @@
 								</div>
 							</c:forEach>
 						</div>
-						<div class="timer">${post.modAt}</div>
+						<c:set value="${post.modAt == post.regAt ? '' : '수정됨' }" var="txt" />
+						<div class="timer">${post.regAt}</div>
 
 						<div class="comment_field" id="add-comment-post37">
 							<input id="commentInput" type="text" placeholder="댓글달기..."
@@ -201,9 +203,9 @@
 				</div>
 			</c:forEach>
 		</div>
-		<c:if test="${cnt >= limit }">
-			<a href="/postCtrl/list?limit=10" id="getMore">게시글 더보기</a>
-		</c:if>
+		<c:forEach begin="1" end="${cnt / 5 == 0 ? cnt / 5 : cnt / 5 + 1 }" varStatus="st">
+			<a href="/postCtrl/list?page=${st.count }">${st.count }</a>
+		</c:forEach>
 		<!-- 게시물 반복 끝 -->
 
 		<!-- register모달 -->
@@ -224,7 +226,7 @@
 							enctype="multipart/form-data">
 							<input type="file" name="imgFile" value=""> <input
 								type="text" name="content" value=""> <input type="text"
-								name="writer" value="${ses.email }">
+								name="writer" readonly value="${ses.email }">
 							<button type="submit">submit</button>
 						</form>
 
@@ -256,12 +258,12 @@
 						<img id="updateImgView" alt="" src="">
 						<form action="/postCtrl/update" method="post"
 							enctype="multipart/form-data">
-							<input type="text" id="prevImgFile" name="prevImgFile" value="">
+							<input type="hidden" id="prevImgFile" name="prevImgFile" value="">
 							<input type="file" name="imgFile" id="updateImgFile" value=""
 								accept="image/x-png,image/gif,image/jpeg"> <input
-								type="text" name="pid" id="updatePid" value=""> <input
+								type="hidden" name="pid" id="updatePid" value=""> <input
 								type="text" name="content" id="updateContent" value="">
-							<input type="text" name="writer" value="${ses.email }">
+							<input type="text" readonly name="writer" value="${ses.email }">
 							<button type="submit">submit</button>
 						</form>
 
@@ -282,7 +284,9 @@
 		<div class="side_box">
 			<div class="user_profile">
 				<div class="profile_thumb">
-					<img src="../_fileUpload/${empty ses.avatar ? 'default_avatar.jpeg'  : ses.avatar }" alt="프로필사진">
+					<img
+						src="../_fileUpload/${empty ses.avatar ? 'default_avatar.jpeg'  : ses.avatar }"
+						alt="프로필사진">
 				</div>
 				<div class="detail">
 					<div class="id m_text">${ses.nickname }(${ses.email })</div>
@@ -301,7 +305,9 @@
 					<c:forEach items="${followingList }" var="following">
 						<div class="thumb_user" data-followuser="${following.email }">
 							<div class="profile_thumb">
-								<img src="../_fileUpload/${empty following.avatar ? 'default_avatar.jpeg' : following.avatar }" alt="프로필사진">
+								<img
+									src="../_fileUpload/${empty following.avatar ? 'default_avatar.jpeg' : following.avatar }"
+									alt="프로필사진">
 							</div>
 							<div class="detail">
 								<div class="id">

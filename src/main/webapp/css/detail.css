@@ -53,6 +53,7 @@ body {
   top: 15px;
   right: 15px;
   font-size: 2em;
+  cursor: pointer;
 }
 
 .container {
@@ -161,5 +162,5 @@ button#submitBtn {
 }
 
 .htag {
-  font-size: 0.5em;
+  font-size: 0.8em;
 }

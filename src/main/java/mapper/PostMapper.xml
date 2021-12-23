@@ -9,7 +9,7 @@
 		values(#{writer}, #{files}, #{content})
 	</insert>
 
-	<select id="list" resultType="pvo">
+	<select id="list" resultType="pvo" >
 <!-- 		select post.post_id , post.writer ,post.like_cnt ,post.mod_at ,post.read_cnt, post.content  , cmt.cmt_writer cmt_writer, cmt.content cmt_content
 from (
 select p.post_id , p.writer , p.mod_at , p.read_cnt, count(l.email) as like_cnt, p.content
@@ -28,11 +28,11 @@ order by p.reg_at desc
 limit 0, #{limit}
 ; -->
 
-select p.post_id, p.writer, count(l.email) like_cnt, p.content,p.files, p.mod_at, p.read_cnt, u.avatar 
+select p.post_id, p.writer, count(l.email) like_cnt, p.content,p.files, p.mod_at, p.read_cnt,p.reg_at, u.avatar 
 from post p left join `like` l on p.post_id  = l.post_id left join user u on p.writer = u.email 
 GROUP BY p.post_id 
 order by p.reg_at desc
-limit 0, #{limit}
+<!-- limit #{page}, 5 -->
 	</select>
 	
 	<select id="cnt" resultType="int">
