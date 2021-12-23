@@ -6,9 +6,9 @@
 	
 	<insert id="reg" parameterType="uvo">
 		insert into user (email, age,
-		name, pwd, is_admin, nick_name, following, follower)
+		name, pwd, is_admin, nick_name)
 		values (#{email}, #{age},
-		#{name}, #{pwd}, #{isAdmin}, #{nickName}, "", "")
+		#{name}, #{pwd}, #{isAdmin}, #{nickName})
 	</insert>
 	
 	<select id="manageList"  resultType="uvo">
@@ -76,5 +76,9 @@
 	<delete id="del" parameterType="string">
 		delete from user where email = #{email}
 	</delete>
+	
+	<select id="check" parameterType="String" resultType="uvo">
+		select email from user where email = #{email};
+	</select>
 	
 </mapper>

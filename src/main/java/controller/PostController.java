@@ -147,6 +147,7 @@ public class PostController extends HttpServlet {
 
 			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
 			List<UserVO> followingList = usv.getFollowingList(uvo.getEmail());// 세션 이메일 넣을것
+			log.info("followingList = {}", followingList);
 			req.setAttribute("likeList", likeList);
 			req.setAttribute("cnt", psv.getCnt());
 			req.setAttribute("postList", postList);

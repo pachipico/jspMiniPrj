@@ -56,7 +56,8 @@ public class UserServiceImple implements UserService {
 		List<String> toFollowerList = new ArrayList<>();
 		Map<String, String> fromMap = udao.selectFollow(from);
 		Map<String, String> toMap = udao.selectFollow(to);
-		
+		System.out.println(fromMap.toString());
+		System.out.println(toMap.toString());
 		String fromFollowing = (String) fromMap.get("following");
 		if (fromFollowing == null || fromFollowing == "") {
 			fromFollowing = "";
@@ -178,7 +179,6 @@ public class UserServiceImple implements UserService {
 	@Override
 	public List<UserVO> getFollowingList(String email) {
 		ArrayList<String> arr = new ArrayList<>(Arrays.asList(udao.selectFollowingCSV(email).split(",")));
-		System.out.println(arr);
 		return udao.selectListByEmail(arr);
 	}
 
@@ -190,6 +190,11 @@ public class UserServiceImple implements UserService {
 	@Override
 	public int modifyAvatar(UserVO uvo) {
 		return udao.updateAvatar(uvo);
+	}
+
+	@Override
+	public int checkEmail(String email) {
+		return udao.emailExist(email);
 	}
 
 }

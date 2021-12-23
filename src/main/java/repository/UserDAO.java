@@ -20,4 +20,5 @@ public interface UserDAO {
 	public List<UserVO> selectListByEmail(ArrayList<String> csv);
 	public int updatePwd(UserVO uvo);
 	public int updateAvatar(UserVO uvo);
+	public int emailExist(String email);
 }

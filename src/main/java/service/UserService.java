@@ -17,4 +17,5 @@ public interface UserService {
 	public List<UserVO> getFollowingList(String email);
 	public int modifyPwd(UserVO uvo);
 	public int modifyAvatar(UserVO uvo);
+	public int checkEmail(String email);
 }
