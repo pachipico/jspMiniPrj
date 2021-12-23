@@ -11,6 +11,8 @@ import orm.DataBaseBuilder;
 
 public class LikeDAOimple implements LikeDAO {
 
+	
+
 	private static final Logger log = LoggerFactory.getLogger(LikeDAOimple.class);
 	private SqlSession sql;
 	private final String ns = "LikeMapper.";
@@ -41,6 +43,15 @@ public class LikeDAOimple implements LikeDAO {
 		return like;
 	}
 
+	@Override
+	public List<String> selectLikedPostId(String email) {
+		sql = DataBaseBuilder.getFactory().openSession();
+		List<String> likedPostId = sql.selectList(ns+"likedPostId", email);
+		sql.close();
+		
+		return likedPostId;
+	}
+	
 	@Override
 	public int delete(LikeVO lvo) {
 		sql = DataBaseBuilder.getFactory().openSession();

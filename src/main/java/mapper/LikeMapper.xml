@@ -13,8 +13,8 @@
 		 where l.email = #{email}
 	</select>
 	
-	<select id="likePostCSV" parameterType="string">
-		select group_concat(post_id) from `like` where email = #{email}
+	<select id="likedPostId" parameterType="string" resultType="hashmap">
+		select concat(post_id) postId from `like` where email = #{email}
 	</select>
 	
 	<delete id="unlike" parameterType="lvo">

@@ -183,9 +183,8 @@ public class PostController extends HttpServlet {
 		case "mylist":
 			// 내 게시물
 			// 내 게시물의 기본적인 정보(ex. email, nickname, avatar..)는 세션에서 가지고 있을 예정
-//			String[] likedPosts = lsv.getLikedPost(req.getParameter("email"));
-//			log.info("liked list: {}", psv.getListByCSV(likedPosts));
-//			log.info("mylist {}", likedPosts);
+			List<String> likedPostId = lsv.getLikedPostId(req.getParameter("email"));
+			log.info("내가 좋아하는 글 목록 > {}", likedPostId);
 			break;
 		case "detail":
 			// 게시물의 디테일로 이동

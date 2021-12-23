@@ -30,4 +30,10 @@ public class LikeServiceImple implements LikeService {
 
 		return ldao.delete(lvo);
 	}
+
+	@Override
+	public List<String> getLikedPostId(String email) {
+		
+		return ldao.selectLikedPostId(email);
+	}
 }
