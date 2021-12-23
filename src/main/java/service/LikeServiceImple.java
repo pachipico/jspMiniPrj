@@ -23,6 +23,7 @@ public class LikeServiceImple implements LikeService {
 
 		return ldao.selectList(email);
 	}
+	
 
 	@Override
 	public int unLike(LikeVO lvo) {

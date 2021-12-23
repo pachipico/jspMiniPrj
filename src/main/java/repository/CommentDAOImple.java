@@ -17,38 +17,47 @@ public class CommentDAOImple implements CommentDAO {
 	
 	public CommentDAOImple() {
 		new DataBaseBuilder();
-		sql = DataBaseBuilder.getFactory().openSession();
+		
 	}
 	
 	@Override
 	public int insert(CommentVO cvo) {
+		sql = DataBaseBuilder.getFactory().openSession();
 		int isUp = sql.insert(ns+"reg", cvo);
 		if (isUp > 0) {
 			sql.commit();
 		}
+		sql.close();
 		return isUp;
 	}
 
 	@Override
 	public List<CommentVO> selectList(long postId) {
-		return sql.selectList(ns+"list", postId);
+		sql = DataBaseBuilder.getFactory().openSession();
+		List<CommentVO> list = sql.selectList(ns+"list", postId);
+		sql.close();
+		return list;
 	}
 
 	@Override
 	public int update(CommentVO cvo) {
+		sql = DataBaseBuilder.getFactory().openSession();
 		int isUp = sql.update(ns+"mod", cvo);
 		if (isUp > 0) {
 			sql.commit();
 		}
+		sql.close();
 		return isUp;
 	}
 
 	@Override
 	public int delete(long cmtId) {
+		sql = DataBaseBuilder.getFactory().openSession();
 		int isUp = sql.delete(ns+"del", cmtId);
 		if (isUp > 0) {
 			sql.commit();
 		}
+		sql.close();
 		return isUp;
 	}
 }

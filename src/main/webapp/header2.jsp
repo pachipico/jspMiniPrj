@@ -30,7 +30,7 @@
 				<div class="right_icons">
 					<a data-bs-toggle="modal" data-bs-target="#regModal"><div class="sprite_camera_icon"></div></a>
 					<a href="login.html"><div class="sprite_compass_icon"></div></a> 
-					<a href="follow.html"><div class="sprite_heart_icon_outline"></div></a>
+					<a href="/postCtrl/mylist?email=${ses.email }"><div class="sprite_heart_icon_outline"></div></a>
 					<button type="button"
 						class="sprite_user_icon_outline dropdown-toggle"
 						data-bs-toggle="dropdown"></button>

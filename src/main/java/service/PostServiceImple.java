@@ -10,9 +10,10 @@ import repository.PostDAO;
 import repository.PostDAOImple;
 
 public class PostServiceImple implements PostService {
+
 	private static Logger log = LoggerFactory.getLogger(PostServiceImple.class);
 	private PostDAO pdao;
-	
+
 	public PostServiceImple() {
 		pdao = new PostDAOImple();
 	}
@@ -27,12 +28,15 @@ public class PostServiceImple implements PostService {
 
 		return pdao.selectList(page);
 	}
-	
-	
+
+	@Override
+	public List<PostVO> getListForProfile(String writer) {
+		return pdao.selectList(writer);
+	}
 
 	@Override
 	public int getCnt() {
-		
+
 		return pdao.selectCnt();
 	}
 
@@ -40,7 +44,7 @@ public class PostServiceImple implements PostService {
 	public PostVO getDetail(long postId) {
 		return pdao.selectOne(postId);
 	}
-	
+
 	@Override
 	public PostVO getDetailAndUp(long postId) {
 		pdao.updateReadcount(postId);

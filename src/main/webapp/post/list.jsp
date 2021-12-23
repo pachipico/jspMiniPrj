@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:include page="../header1.jsp" />
 <link rel="stylesheet" href="../css/profile.css">
 <jsp:include page="../header2.jsp" />
@@ -202,10 +203,12 @@
 					</article>
 				</div>
 			</c:forEach>
-		</div>
-		<c:forEach begin="1" end="${cnt / 5 == 0 ? cnt / 5 : cnt / 5 + 1 }" varStatus="st">
+			<div class="page">
+		<c:forEach begin="1" end="${ Math.ceil(cnt / 5) }" varStatus="st">
 			<a href="/postCtrl/list?page=${st.count }">${st.count }</a>
 		</c:forEach>
+			</div>
+		</div>
 		<!-- 게시물 반복 끝 -->
 
 		<!-- register모달 -->
