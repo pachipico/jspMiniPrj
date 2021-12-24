@@ -20,6 +20,7 @@ public class PostDAOImple implements PostDAO {
 		new DataBaseBuilder();
 	}
 
+
 	@Override
 	public int insert(PostVO pvo) {
 
@@ -66,6 +67,19 @@ public class PostDAOImple implements PostDAO {
 		return null;
 	}
 
+	@Override
+	public List<PostVO> selectList(List<String> likedList) {
+		try {
+			SqlSession sql = DataBaseBuilder.getFactory().openSession();
+			List<PostVO> list = sql.selectList(ns+"liked", likedList);
+			sql.close();
+			return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 	
 	@Override
 	public PostVO selectOne(long postId) {

@@ -8,6 +8,7 @@ public interface PostService {
 	public int register(PostVO pvo);
 	public List<PostVO> getList(int page);
 	public List<PostVO> getListForProfile(String writer);
+	public List<PostVO> getLikeList(List<String> likedList);
 	public PostVO getDetail(long postId);
 	public PostVO getDetailAndUp(long postId);
 	public int getCnt();

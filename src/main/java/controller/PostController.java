@@ -142,7 +142,7 @@ public class PostController extends HttpServlet {
 				page = Integer.parseInt(req.getParameter("page"));
 			}
 			log.info("page: {}", page);
-			List<PostVO> postList = psv.getList((page-1)*5);
+			List<PostVO> postList = psv.getList((page - 1) * 5);
 			UserVO uvo = (UserVO) session.getAttribute("ses");
 
 			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
@@ -180,28 +180,49 @@ public class PostController extends HttpServlet {
 			PrintWriter out = res.getWriter();
 			out.print(gson.toJson(data));
 			break;
+		case "search":
+				
+			break;
 		case "mylist":
 			// 내 게시물
 			// 내 게시물의 기본적인 정보(ex. email, nickname, avatar..)는 세션에서 가지고 있을 예정
 			List<String> likedPostId = lsv.getLikedPostId(req.getParameter("email"));
 			log.info("내가 좋아하는 글 목록 > {}", likedPostId);
+			log.info("liked post  > {}", psv.getLikeList(likedPostId));
+			HttpSession session2 = req.getSession();
+			List<PostVO> postList2 = psv.getLikeList(likedPostId);
+			UserVO uvo2 = (UserVO) session2.getAttribute("ses");
+			
+			List<LikeVO> likeList2 = lsv.getList(uvo2.getEmail());
+			List<UserVO> followingList2 = usv.getFollowingList(uvo2.getEmail());// 세션 이메일 넣을것
+			log.info("followingList = {}", followingList2);
+			req.setAttribute("likeList", likeList2);
+			req.setAttribute("cnt", psv.getCnt());
+			req.setAttribute("postList", postList2);
+			req.setAttribute("followingList", followingList2);
+			for (PostVO pvo : postList2) {
+				req.setAttribute("cmt" + pvo.getPostId(), csv.getList(pvo.getPostId()));
+			}
+			
+			
+			req.getRequestDispatcher("/post/list.jsp").forward(req, res);
 			break;
 		case "detail":
 			// 게시물의 디테일로 이동
 			Long pid = Long.parseLong(req.getParameter("pid"));
-			PostVO post =  psv.getDetailAndUp(pid);
+			PostVO post = psv.getDetailAndUp(pid);
 			String str = post.getContent();
 			List<String> tags = new ArrayList<>();
 			log.info("content: {}", str);
 			Pattern pattern = Pattern.compile("(#[ㄱ-힣A-Za-z0-9-_]+)(?:#[A-Za-z0-9가-힣-_]+)*\\b");
 			Matcher matcher = pattern.matcher(str);
-			
-			while (matcher.find()){
+
+			while (matcher.find()) {
 				String tag = matcher.group(1);
 				tags.add(tag);
-			} 
-			
-			req.setAttribute("pvo",post);
+			}
+
+			req.setAttribute("pvo", post);
 			req.setAttribute("content", matcher.replaceAll(""));
 			req.setAttribute("hashtags", tags);
 			req.setAttribute("cvoList", csv.getList(pid));
@@ -245,7 +266,7 @@ public class PostController extends HttpServlet {
 					case "prevImgFile":
 						pvo2.setFiles(item.getString("utf-8"));
 						prevFile = pvo2.getFiles();
-						
+
 						break;
 					case "pid":
 						pvo2.setPostId(Long.parseLong(item.getString("utf-8")));
@@ -257,10 +278,10 @@ public class PostController extends HttpServlet {
 							String fileName = item.getName().substring(item.getName().lastIndexOf(File.separator) + 1);
 							File removeFile = new File(fileDir + File.separator + prevFile);
 							boolean rm = false;
-							if(removeFile.exists()) {
+							if (removeFile.exists()) {
 								rm = removeFile.delete();
 							}
-							
+
 							log.info(">>> profileImg delete {}", rm ? "Success" : "Fail");
 							fileName = System.currentTimeMillis() + "-" + fileName;
 							File uploadFilePath = new File(fileDir + File.separator + fileName);

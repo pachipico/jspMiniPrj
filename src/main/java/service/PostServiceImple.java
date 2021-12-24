@@ -11,6 +11,8 @@ import repository.PostDAOImple;
 
 public class PostServiceImple implements PostService {
 
+	
+
 	private static Logger log = LoggerFactory.getLogger(PostServiceImple.class);
 	private PostDAO pdao;
 
@@ -34,6 +36,12 @@ public class PostServiceImple implements PostService {
 		return pdao.selectList(writer);
 	}
 
+	@Override
+	public List<PostVO> getLikeList(List<String> likedList) {
+		
+		return pdao.selectList(likedList);
+	}
+	
 	@Override
 	public int getCnt() {
 

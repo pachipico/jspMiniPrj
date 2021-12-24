@@ -11,22 +11,12 @@
 	</insert>
 
 	<select id="list" resultType="pvo">
-		<!-- select post.post_id , post.writer ,post.like_cnt ,post.mod_at ,post.read_cnt, 
-			post.content , cmt.cmt_writer cmt_writer, cmt.content cmt_content from ( 
-			select p.post_id , p.writer , p.mod_at , p.read_cnt, count(l.email) as like_cnt, 
-			p.content from post p left join `like` l on p.post_id = l.post_id group by 
-			p.post_id ) post left join ( select c.post_id , c.writer cmt_writer, c.content 
-			from post p right join comment c on p.post_id = c.post_id ) cmt on post.post_id 
-			= cmt.post_id -->
-		<!-- select p.post_id, p.writer, count(l.email) like_cnt, p.content,p.files, 
-			p.mod_at, p.read_cnt, u.avatar from post p left join `like` l on p.post_id 
-			= l.post_id left join user u on p.writer = u.email GROUP BY p.post_id order 
-			by p.reg_at desc limit 0, #{limit} ; -->
-
+	
 		select p.post_id, p.writer, count(l.email) like_cnt,
 		p.content,p.files, p.mod_at, p.read_cnt,p.reg_at, u.avatar
 		from post p left join `like` l on p.post_id = l.post_id left join user u
 		on p.writer = u.email
+		where p.content like '%%'
 		GROUP BY p.post_id
 		order by p.reg_at desc
 		limit #{page}, 5
@@ -39,7 +29,7 @@
 	
 
 	<select id="cnt" resultType="int">
-		select count(post_id) from post
+		select count(post_id) from post where content like '%%'
 	</select>
 
 	<select id="one" parameterType="long" resultType="pvo">
@@ -54,19 +44,18 @@
 		group by p.post_id
 	</select>
 
-	<select id="liked" resultType="pvo">
+	<select id="liked" parameterType="map" resultType="pvo">
 		select p.post_id, p.writer, count(l.email) like_cnt,
 		p.content,p.files, p.mod_at, p.read_cnt,p.reg_at, u.avatar
 		from post p left join `like` l on p.post_id = l.post_id left join user u
 		on p.writer = u.email
 		where p.post_id in
-		<foreach collection="array" item="arr" open="(" close=")"
+		<foreach collection="list" item="post" open="(" close=")"
 			separator=",">
-			#{likedPosts}
+			#{post.postId}
 		</foreach>
 		GROUP BY p.post_id
 		order by p.reg_at desc
-		limit #{page}, 5
 	</select>
 
 
