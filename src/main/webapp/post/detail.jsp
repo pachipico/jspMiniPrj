@@ -50,7 +50,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           <div class="content_text">${content }</div>
           <div class="htag_area">
           <c:forEach items="${hashtags }" var="tag">
-           	 <a class="htag" href="https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=${fn:replace(tag, '#', '') }">${tag }</a>
+           	 <a class="htag" href="/postCtrl/list?query=${fn:replace(tag, '#', '') }">${tag }</a>
            </c:forEach>
           </div>
           <div class="sns_btn">

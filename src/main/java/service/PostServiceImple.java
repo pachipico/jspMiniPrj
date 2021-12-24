@@ -26,9 +26,9 @@ public class PostServiceImple implements PostService {
 	}
 
 	@Override
-	public List<PostVO> getList(int page) {
+	public List<PostVO> getList(int page, String query) {
 
-		return pdao.selectList(page);
+		return pdao.selectList(page, query);
 	}
 
 	@Override
@@ -43,9 +43,9 @@ public class PostServiceImple implements PostService {
 	}
 	
 	@Override
-	public int getCnt() {
+	public int getCnt(String query) {
 
-		return pdao.selectCnt();
+		return pdao.selectCnt(query);
 	}
 
 	@Override

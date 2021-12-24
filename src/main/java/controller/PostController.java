@@ -136,25 +136,31 @@ public class PostController extends HttpServlet {
 			if (session.getAttribute("ses") == null) {
 				res.sendRedirect("/userCtrl/login");
 			}
-			log.info("count : {}", psv.getCnt());
 			int page = 1;
+			String query = "";
 			if (req.getParameter("page") != null && !req.getParameter("page").equals("")) {
 				page = Integer.parseInt(req.getParameter("page"));
 			}
-			log.info("page: {}", page);
-			List<PostVO> postList = psv.getList((page - 1) * 5);
+			if(req.getParameter("query") != null && !req.getParameter("query").equals("")) {
+				query = req.getParameter("query");
+			}
+			List<PostVO> postList = psv.getList((page - 1) * 5, query);
 			UserVO uvo = (UserVO) session.getAttribute("ses");
 
 			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
 			List<UserVO> followingList = usv.getFollowingList(uvo.getEmail());// 세션 이메일 넣을것
-			log.info("followingList = {}", followingList);
+//			log.info("followingList = {}", followingList);
 			req.setAttribute("likeList", likeList);
-			req.setAttribute("cnt", psv.getCnt());
+			req.setAttribute("cnt", psv.getCnt(query));
 			req.setAttribute("postList", postList);
 			req.setAttribute("followingList", followingList);
 			for (PostVO pvo : postList) {
 				req.setAttribute("cmt" + pvo.getPostId(), csv.getList(pvo.getPostId()));
 			}
+			
+			log.info("list: {}", postList);
+			log.info("page: {}", page);
+			log.info("count : {}", psv.getCnt(query));
 
 			req.getRequestDispatcher("/post/list.jsp").forward(req, res);
 
@@ -165,7 +171,7 @@ public class PostController extends HttpServlet {
 			if (req.getParameter("limit") != null && !req.getParameter("limit").equals("")) {
 				limit1 = Integer.parseInt(req.getParameter("limit"));
 			}
-			List<PostVO> posts = psv.getList(limit1);
+			List<PostVO> posts = psv.getList(limit1,"");
 
 			Gson gson = new Gson();
 			JSONArray data = new JSONArray();
@@ -193,11 +199,12 @@ public class PostController extends HttpServlet {
 			List<PostVO> postList2 = psv.getLikeList(likedPostId);
 			UserVO uvo2 = (UserVO) session2.getAttribute("ses");
 			
+			
 			List<LikeVO> likeList2 = lsv.getList(uvo2.getEmail());
 			List<UserVO> followingList2 = usv.getFollowingList(uvo2.getEmail());// 세션 이메일 넣을것
 			log.info("followingList = {}", followingList2);
 			req.setAttribute("likeList", likeList2);
-			req.setAttribute("cnt", psv.getCnt());
+			req.setAttribute("cnt", psv.getCnt(""));
 			req.setAttribute("postList", postList2);
 			req.setAttribute("followingList", followingList2);
 			for (PostVO pvo : postList2) {

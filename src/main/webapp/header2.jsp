@@ -20,8 +20,9 @@
 				</h1>
 
 				<div class="search_box">
-					<input type="text" placeholder="검색" id="search-field">
-
+					<form action="/postCtrl/list" method="GET">
+					<input type="text" placeholder="검색" name="query" id="search-field" >
+					</form>		
 					<div class="fake_field">
 						<span class="sprite_small_search_icon"></span> <span>검색</span>
 					</div>
@@ -44,5 +45,5 @@
 				</div>
 
 			</section>
-
+		<script src="/js/nav.js"></script>
 		</header>

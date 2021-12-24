@@ -10,13 +10,13 @@
 		values(#{writer}, #{files}, #{content})
 	</insert>
 
-	<select id="list" resultType="pvo">
+	<select id="list" parameterType="map" resultType="pvo">
 	
 		select p.post_id, p.writer, count(l.email) like_cnt,
 		p.content,p.files, p.mod_at, p.read_cnt,p.reg_at, u.avatar
 		from post p left join `like` l on p.post_id = l.post_id left join user u
 		on p.writer = u.email
-		where p.content like '%%'
+		where p.content like #{query}
 		GROUP BY p.post_id
 		order by p.reg_at desc
 		limit #{page}, 5
@@ -28,8 +28,8 @@
 	</select>
 	
 
-	<select id="cnt" resultType="int">
-		select count(post_id) from post where content like '%%'
+	<select id="cnt" parameterType="string" resultType="int">
+		select count(post_id) from post where content like #{query}
 	</select>
 
 	<select id="one" parameterType="long" resultType="pvo">

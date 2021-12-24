@@ -1,6 +1,8 @@
 package repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -19,7 +21,6 @@ public class PostDAOImple implements PostDAO {
 	public PostDAOImple() {
 		new DataBaseBuilder();
 	}
-
 
 	@Override
 	public int insert(PostVO pvo) {
@@ -40,11 +41,13 @@ public class PostDAOImple implements PostDAO {
 	}
 
 	@Override
-	public List<PostVO> selectList(int page) {
+	public List<PostVO> selectList(int page, String query) {
 		try {
 			sql = DataBaseBuilder.getFactory().openSession();
-
-			List<PostVO> list = sql.selectList(ns + "list", page);
+			Map<String, Object> map = new HashMap<>();
+			map.put("page", page);
+			map.put("query", "%" + query + "%");
+			List<PostVO> list = sql.selectList(ns + "list", map);
 			sql.close();
 			return list;
 
@@ -58,7 +61,7 @@ public class PostDAOImple implements PostDAO {
 	public List<PostVO> selectList(String writer) {
 		try {
 			SqlSession sql = DataBaseBuilder.getFactory().openSession();
-			List<PostVO> list = sql.selectList(ns+"profileList", writer);
+			List<PostVO> list = sql.selectList(ns + "profileList", writer);
 			sql.close();
 			return list;
 		} catch (Exception e) {
@@ -71,16 +74,17 @@ public class PostDAOImple implements PostDAO {
 	public List<PostVO> selectList(List<String> likedList) {
 		try {
 			SqlSession sql = DataBaseBuilder.getFactory().openSession();
-			List<PostVO> list = sql.selectList(ns+"liked", likedList);
+
+			List<PostVO> list = sql.selectList(ns + "liked", likedList);
 			sql.close();
 			return list;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public PostVO selectOne(long postId) {
 		try {
@@ -96,10 +100,10 @@ public class PostDAOImple implements PostDAO {
 	}
 
 	@Override
-	public int selectCnt() {
+	public int selectCnt(String query) {
 		try {
 			sql = DataBaseBuilder.getFactory().openSession();
-			int cnt = sql.selectOne(ns + "cnt");
+			int cnt = sql.selectOne(ns + "cnt", "%" + query + "%");
 			sql.close();
 			return cnt;
 		} catch (Exception e) {
