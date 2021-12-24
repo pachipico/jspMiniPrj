@@ -6,9 +6,9 @@
 	
 	<insert id="reg" parameterType="uvo">
 		insert into user (email, age,
-		name, pwd, is_admin, nick_name)
+		name, pwd, is_admin, nick_name, follower, following)
 		values (#{email}, #{age},
-		#{name}, #{pwd}, #{isAdmin}, #{nickName})
+		#{name}, #{pwd}, #{isAdmin}, #{nickName}, "", "")
 	</insert>
 	
 	<select id="manageList"  resultType="uvo">

@@ -204,9 +204,12 @@
 				</div>
 			</c:forEach>
 			<div class="page">
+			<c:if test="${empty param.email }">
+			
 		<c:forEach begin="1" end="${ Math.ceil(cnt / 5) }" varStatus="st">
 			<a href="/postCtrl/list?page=${st.count }&query=${param.query}">${st.count }</a>
 		</c:forEach>
+			</c:if>
 			</div>
 		</div>
 		<!-- 게시물 반복 끝 -->

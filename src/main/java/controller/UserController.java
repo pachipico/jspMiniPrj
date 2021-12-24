@@ -108,7 +108,7 @@ public class UserController extends HttpServlet {
 			}
 			log.info("기존회원인가요? {}", isUp > 0 ? "yes" : "no");
 			if (isUp < 1) {
-				usv.register(new UserVO(email, 0, "", emptyPwd, false, ""));
+				usv.register(new UserVO(email, 0, "", emptyPwd, false, "", " ", " "));
 			}
 			
 			// 로그인시키기
@@ -155,7 +155,7 @@ public class UserController extends HttpServlet {
 			
 			isUp = usv.register(new UserVO(req.getParameter("email"), Integer.parseInt(req.getParameter("age")),
 					req.getParameter("name"), loginPwd,
-					Boolean.parseBoolean(req.getParameter("isAdmin")), req.getParameter("nickName")));
+					Boolean.parseBoolean(req.getParameter("isAdmin")), req.getParameter("nickName"), " ", " "));
 			log.info(">> register {}", isUp > 0 ? "Success" : "Fail");
 			req.getRequestDispatcher("/index.jsp").forward(req, res);
 			break;
@@ -230,6 +230,7 @@ public class UserController extends HttpServlet {
 					req.getParameter("name"), Boolean.parseBoolean(req.getParameter("isAdmin")),
 					req.getParameter("nickName")));
 			log.info(">> modify {}", isUp > 0 ? "Success" : "Fail");
+			
 			req.getRequestDispatcher("/userCtrl/detail?email=" + req.getParameter("email"));
 			break;
 		case "changePwd":
@@ -361,6 +362,8 @@ public class UserController extends HttpServlet {
 
 			log.info(">>> uvo > {}", uvo);
 			isUp = usv.modifyAvatar(uvo);
+			
+			req.getSession().setAttribute("ses", usv.logInWithKakao(uvo.getEmail()));
 			req.getRequestDispatcher("/userCtrl/profile?email=" + uvo.getEmail()).forward(req, res);
 			break;
 		case "follow":

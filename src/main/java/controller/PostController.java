@@ -207,8 +207,11 @@ public class PostController extends HttpServlet {
 			req.setAttribute("cnt", psv.getCnt(""));
 			req.setAttribute("postList", postList2);
 			req.setAttribute("followingList", followingList2);
-			for (PostVO pvo : postList2) {
-				req.setAttribute("cmt" + pvo.getPostId(), csv.getList(pvo.getPostId()));
+			if(postList2 != null) {
+				for (PostVO pvo : postList2) {
+					req.setAttribute("cmt" + pvo.getPostId(), csv.getList(pvo.getPostId()));
+				}
+
 			}
 			
 			
