@@ -229,7 +229,7 @@ updateImgFile.addEventListener("change", (e) => changeUpdateView(e.target));
         document.querySelector("#updateContent").value = result.content;
         document.querySelector("#updatePid").value = result.pid;
         document.querySelector("#prevImgFile").value = result.imgFile;
-        document.querySelector("#updateImgView").src = `../_postImgUpload/${result.imgFile}`;
+        document.querySelector("#updateImgView").src = `../_fileUpload/post/${result.imgFile}`;
       });
   });
 });

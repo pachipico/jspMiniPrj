@@ -9,4 +9,5 @@ public interface LikeDAO {
 	public List<LikeVO> selectList(String email);
 	public List<String> selectLikedPostId(String email);
 	public int delete(LikeVO lvo);
+	public int deleteAll(String email);
 }

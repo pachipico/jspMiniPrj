@@ -13,5 +13,6 @@ public interface PostDAO {
 	public int selectCnt(String query);
 	public int update(PostVO pvo);
 	public int delete(long postId);
+	public int deleteAll(String email);
 	public int updateReadcount(long postId);
 }

@@ -18,4 +18,6 @@ public interface UserService {
 	public int modifyPwd(UserVO uvo);
 	public int modifyAvatar(UserVO uvo);
 	public int checkEmail(String email);
+	public UserVO logInWithKakao(String email);
+	public void unfollowAll(String email);
 }

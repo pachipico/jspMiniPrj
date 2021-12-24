@@ -7,7 +7,7 @@
 <jsp:include page="../header2.jsp" />
 
 <div id="main_container">
-
+	<input type="hidden" id="email" value="${uvo.email }">
 	<section class="b_inner">
 
 		<div class="hori_cont">
@@ -15,7 +15,7 @@
 				<div class="profile_img">
 					<c:choose>
 						<c:when test="${uvo.avatar ne '' && uvo.avatar ne null }">
-							<img src="../_fileUpload/${uvo.avatar }">
+							<img src="../_fileUpload/avatar/${uvo.avatar }">
 						</c:when>
 						<c:otherwise>
 							<img src="../imgs/thumb.jpeg">
@@ -31,14 +31,20 @@
 							<a href="/userCtrl/detail?email=${ses.email }" class="profile_edit">프로필 편집</a>					
 						</c:when>
 						<c:otherwise>
-							<a href="/userCtrl/follow?from=${ses.email }&to=${uvo.email }" class="profile_edit" id="follow">팔로우</a>
-							<a href="/userCtrl/unfollow?from=${ses.email }&to=${uvo.email }" class="profile_edit" id="follow">언팔로우</a>
+							<c:choose>
+								<c:when test="${follower.contains(ses.email) }">
+									<a href="/userCtrl/unfollow?from=${ses.email }&to=${uvo.email }" class="profile_edit" id="follow">언팔로우</a>
+								</c:when>
+								<c:otherwise>
+									<a href="/userCtrl/follow?from=${ses.email }&to=${uvo.email }" class="profile_edit" id="follow">팔로우</a>
+								</c:otherwise>
+							</c:choose>
 						</c:otherwise>
 					</c:choose>
 				</div>
 
 				<ul class="middle">
-					<li><span>게시물</span> 3</li>
+					<li>게시물 3</li>
 					<li><a href="#" data-bs-toggle="modal"
 						data-bs-target="#follower"><span>팔로워</span> ${follower.size() }</a></li>
 					<li><a href="#" data-bs-toggle="modal"
@@ -70,16 +76,18 @@
 							<div style="height:50px;">
 							<!-- 썸네일 -->
 							<div style="width:20%; float:left;">
-							<img  class="circle" src="../imgs/thumb.jpeg" style="width:100%;height:100%;">
+								<img  class="circle" src="../imgs/thumb.jpeg" style="width:100%;height:100%;">
 							</div>
 							<!-- 닉네임 -->
 							<div style="width:60%; float:left;">
 								<a href="/userCtrl/profile?email=${item }">${item }</a>
 							</div>
 							<!-- 삭제버튼 -->
+							<c:if test="${uvo.email eq ses.email }">
 							<div style="width:20%; float:right;">
-								<button type="button" class="btn btn-sm btn-outline-secondary">삭제</button>
+								<button type="button" data-set="${item }" class="btn btn-sm btn-outline-secondary" id="followerDel">삭제</button>
 							</div>
+							</c:if>
 							</div>
 						</c:forEach>
 					</div>
@@ -99,7 +107,7 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 					</div>
 
-					<!-- 팔로워 리스트 각각 a링크 -->
+					<!-- 팔로잉 리스트 각각 a링크 -->
 					<div class="modal-body">
 						<c:if test="${following.size() == 0 }">
 							팔로우 목록이 없습니다.
@@ -108,16 +116,18 @@
 							<div style="height:50px;">
 							<!-- 썸네일 -->
 							<div style="width:20%; float:left;">
-							<img  class="circle" src="../imgs/thumb.jpeg" style="width:100%;height:100%;">
+								<img  class="circle" src="../imgs/thumb.jpeg" style="width:100%;height:100%;">
 							</div>
 							<!-- 닉네임 -->
 							<div style="width:60%; float:left;">
 								<a href="/userCtrl/profile?email=${item }">${item }</a>
 							</div>
 							<!-- 삭제버튼 -->
+							<c:if test="${uvo.email eq ses.email }">
 							<div style="width:20%; float:right;">
-								<button type="button" class="btn btn-sm btn-outline-secondary">삭제</button>
+								<button type="button" data-set="${item }" class="btn btn-sm btn-outline-secondary" id="followingDel">삭제</button>
 							</div>
+							</c:if>
 							</div>
 						</c:forEach>
 					</div>
@@ -127,35 +137,29 @@
 		</div>
 
 		<!-- 내가 올린 게시물 -->
-		<div class="mylist_contents contents_container active">
-			<div class="pic">
-				<a href="#"><img src="../imgs/img_section/img01.jpg" alt=""></a>
-			</div>
-			<div class="pic">
-				<a href="#"><img src="../imgs/img_section/img02.jpg" alt=""></a>
-			</div>
-			<div class="pic">
-				<a href="#"> <img src="../imgs/img_section/img03.jpg" alt=""></a>
-			</div>
-			<div class="pic">
-				<a href="#"> <img src="../imgs/img_section/img02.jpg" alt=""></a>
-			</div>
-			<div class="pic">
-				<a href="#"> <img src="../imgs/img_section/img03.jpg" alt=""></a>
-			</div>
-			<div class="pic">
-				<a href="#"> <img src="../imgs/img_section/img01.jpg" alt=""></a>
-			</div>
-			<div class="pic">
-				<a href="#"> <img src="../imgs/img_section/img02.jpg" alt=""></a>
-			</div>
-			<div class="pic">
-				<a href="#"> <img src="../imgs/img_section/img03.jpg" alt=""></a>
-			</div>
-			<div class="pic">
-				<a href="#"> <img src="../imgs/img_section/img01.jpg" alt=""></a>
-			</div>
+		<div class="mylist_contents contents_container active" id="postList">
+
 		</div>
+		
+		<!-- The Modal -->
+<div class="modal" id="postModal">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">${uvo.nickname }</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <img src="">
+      </div>
+
+    </div>
+  </div>
+</div>
 
 		<!-- 북마크 -->
 		<div class="bookmark_contents contents_container">
@@ -190,10 +194,6 @@
 
 	</section>
 </div>
-
 <script src="../js/profile.js"></script>
-<script>
-	
-</script>
 </body>
 </html>

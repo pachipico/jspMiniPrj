@@ -9,4 +9,5 @@ public interface CommentDAO {
 	public List<CommentVO> selectList(long postId);
 	public int update(CommentVO cvo);
 	public int delete(long cmtId);
+	public int deleteAll(String writer);
 }

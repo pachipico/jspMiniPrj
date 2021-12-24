@@ -74,5 +74,10 @@
 		delete from post where post_id =
 		#{postId}
 	</delete>
+	
+		<delete id="delAll" parameterType="String">
+		delete from post where writer = #{writer}
+	</delete>
+	
 
 </mapper>

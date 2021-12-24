@@ -23,6 +23,9 @@
 <delete id="del" parameterType="long">
 	delete from comment where cmt_id = #{cmtId}
 </delete>
+<delete id="delAll" parameterType="String">
+	delete from comment where writer = #{writer}
+</delete>
 
 
 </mapper>

@@ -171,6 +171,7 @@ public class UserDAOImple implements UserDAO {
 	public List<UserVO> selectListByEmail(ArrayList<String> csv) {
 		try {
 			SqlSession sql = DataBaseBuilder.getFactory().openSession();
+//			System.out.println(csv);
 			List<UserVO> list = sql.selectList(ns + "selectListByEmail", csv);
 			sql.close();
 			return list;
@@ -213,15 +214,28 @@ public class UserDAOImple implements UserDAO {
 	}
 
 	@Override
-	public int emailExist(String email) {
+	public UserVO emailExist(String email) {
 		try {
 			SqlSession sql = DataBaseBuilder.getFactory().openSession();
-			UserVO isExist = sql.selectOne(ns + "check", email);
+			UserVO uvo = sql.selectOne(ns + "check", email);
 			sql.close();
-			return (email.equals(isExist.getEmail())) ? 1 : 0;
+			return uvo;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return 0;
+		return null;
+	}
+
+	@Override
+	public UserVO kakaoLogin(String email) {
+		try {
+			SqlSession sql = DataBaseBuilder.getFactory().openSession();
+			UserVO loginUvo = sql.selectOne(ns + "kakaoLogin", email);
+			sql.close();
+			return loginUvo;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,14 +23,24 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import api.KakaoAPI;
+import api.pwdHash;
+import domain.CommentVO;
+import domain.PostVO;
 import domain.UserVO;
 import net.coobird.thumbnailator.Thumbnails;
+import service.CommentService;
+import service.CommentServiceImple;
+import service.LikeService;
+import service.LikeServiceImple;
+import service.PostService;
+import service.PostServiceImple;
 import service.UserService;
 import service.UserServiceImple;
 
@@ -36,14 +49,24 @@ public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 	private final UserService usv;
+	private final PostService psv;
+	private final CommentService csv;
+	private final LikeService lsv;
 	private RequestDispatcher rdp;
 	private int isUp;
 	private String UTF8 = "utf-8";
 	private UserVO uvo;
+	private PostVO pvo;
+	private PrintWriter out;
 	private KakaoAPI kakaoApi = new KakaoAPI();
+	private pwdHash hash = new pwdHash();
 
 	public UserController() {
 		usv = new UserServiceImple();
+		psv = new PostServiceImple();
+		csv = new CommentServiceImple();
+		lsv = new LikeServiceImple();
+		
 	}
 
 	@Override
@@ -54,7 +77,7 @@ public class UserController extends HttpServlet {
 
 		String uri = req.getRequestURI();
 		String path = uri.substring(uri.lastIndexOf("/") + 1);
-		log.info("userCtrl");
+
 		// 세션에 유저가 없으면 로그인페이지로
 		switch (path) {
 		case "kakaologin":
@@ -69,19 +92,50 @@ public class UserController extends HttpServlet {
 				req.getRequestDispatcher("/index.jsp").forward(req, res);
 				break;
 			}
-			log.info(userInfo.get("email").toString());
-
-			HttpSession kSes = req.getSession();
-//			kSes.setAttribute("kEmail", userInfo.get("email")); 
-			kSes.setAttribute("access_token", accessToken);
-			req.setAttribute("email", userInfo.get("email"));
-			req.getRequestDispatcher("/user/restregister.jsp").forward(req, res);
-
+			String email = userInfo.get("email").toString();
+			
+			// 기존의 회원인지 체크
+			isUp = usv.checkEmail(email);
+			
+			// 기존회원이 아니면 레지스터
+			String emptyPwd = "";
+			try {
+				emptyPwd = hash.bytesToHex(hash.sha256(""));
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			log.info("기존회원인가요? {}", isUp > 0 ? "yes" : "no");
+			if (isUp < 1) {
+				usv.register(new UserVO(email, 0, "", emptyPwd, false, ""));
+			}
+			
+			// 로그인시키기
+			uvo = usv.logInWithKakao(email);
+			if (uvo != null) {
+				HttpSession ses = req.getSession();
+				ses.setAttribute("ses", uvo);
+				ses.setAttribute("access_token", accessToken);
+				if (req.getParameter("iska") != null) {
+					ses.setAttribute("isSocial", true);
+				}
+				ses.setMaxInactiveInterval(60 * 20);
+			}
+			
+			if (uvo.getPwd().equals(emptyPwd)) {
+				req.getRequestDispatcher("/userCtrl/changePwd?email=" + email).forward(req, res);
+			} else {
+				req.getRequestDispatcher("/postCtrl/list").forward(req, res);				
+			}
+			// kakao
+			break;
+		case "kakaoUnlink":
+			HttpSession kakaoSes = req.getSession();
+			log.info(kakaoSes.getAttribute("accessToken").toString());
 //			kakaoApi.kakaoLogout(accessToken);
 //			kakaoApi.kakaoUnlink(accessToken);
-			break;
-		case "kakaologout":
-
+			
 			break;
 		case "register":
 			// 회원가입 페이지로
@@ -90,22 +144,20 @@ public class UserController extends HttpServlet {
 		case "insert":
 			// 회원가입
 			// 이후 로그인페이지로
+			String loginPwd = "";
+			try {
+				loginPwd = hash.bytesToHex(hash.sha256(req.getParameter("pwd")));
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
 			isUp = usv.register(new UserVO(req.getParameter("email"), Integer.parseInt(req.getParameter("age")),
-					req.getParameter("name"), req.getParameter("pwd"),
+					req.getParameter("name"), loginPwd,
 					Boolean.parseBoolean(req.getParameter("isAdmin")), req.getParameter("nickName")));
 			log.info(">> register {}", isUp > 0 ? "Success" : "Fail");
 			req.getRequestDispatcher("/index.jsp").forward(req, res);
-			break;
-		case "insertwithkakao":
-			// 회원가입
-			// 이후 로그인페이지로
-			isUp = usv.register(new UserVO(req.getParameter("email"), Integer.parseInt(req.getParameter("age")),
-					req.getParameter("name"), req.getParameter("pwd"),
-					Boolean.parseBoolean(req.getParameter("isAdmin")), req.getParameter("nickName")));
-			log.info(">> register {}", isUp > 0 ? "Success" : "Fail");
-			req.getRequestDispatcher(
-					"/userCtrl/login?email=" + req.getParameter(path) + "$pwd=" + req.getParameter("pwd"))
-					.forward(req, res);
 			break;
 		case "list":
 			// 관리자용 유저관리 리스트
@@ -128,10 +180,41 @@ public class UserController extends HttpServlet {
 				}
 			}
 			log.info(Integer.toString(following.size()));
+			
 			req.setAttribute("follower", follower);
 			req.setAttribute("following", following);
 			req.setAttribute("uvo", usv.getDetail(req.getParameter("email")));
 			req.getRequestDispatcher("/user/profile.jsp").forward(req, res);
+			break;
+		case "postlist":
+				ArrayList<PostVO> list = (ArrayList<PostVO>) psv.getListForProfile(req.getParameter("email"));
+				for (PostVO pvo : list) {
+					log.info(pvo.getFiles());
+				}
+				JSONObject[] jsonObjArr = new JSONObject[list.size()];
+				// list의 수만큼 JSONObj를 담을 배열
+				JSONArray jsonObjList = new JSONArray();
+				// ArrayList와 비슷한 개념
+				for (int i = 0; i < list.size(); i++) {
+					jsonObjArr[i] = new JSONObject(); // Key : Value (mapping)
+					
+					jsonObjArr[i].put("postId", list.get(i).getPostId());
+					jsonObjArr[i].put("writer", list.get(i).getWriter());
+					jsonObjArr[i].put("likeCnt", list.get(i).getLikeCnt());
+					jsonObjArr[i].put("content", list.get(i).getContent());
+					jsonObjArr[i].put("modAt", list.get(i).getModAt());
+					jsonObjArr[i].put("readCnt", list.get(i).getReadCnt());
+					jsonObjArr[i].put("files", list.get(i).getFiles());
+					
+					jsonObjList.add(jsonObjArr[i]);
+				}
+				// JSONObject cmtList = new JSONObject();
+				// cmtList.put("cmtList", jsonObjList);
+				// 과거엔 필요했지만 지금?은 굳이..필요없음
+				String jsonData = jsonObjList.toJSONString();
+				
+				out = res.getWriter();
+				out.print(jsonData);
 			break;
 		case "detail":
 			// 회원정보 수정을 위한 페이지로
@@ -166,8 +249,18 @@ public class UserController extends HttpServlet {
 				log.info(">>> sb {}", sb.toString());
 				JSONParser parser = new JSONParser();
 				JSONObject jsonObj = (JSONObject) parser.parse(sb.toString());
-				uvo = usv.logIn(new UserVO(jsonObj.get("email").toString(), jsonObj.get("pwd").toString()));
-				PrintWriter out = res.getWriter();
+				
+				String checkPwd = "";
+				try {
+					checkPwd = hash.bytesToHex(hash.sha256(jsonObj.get("pwd").toString()));
+				} catch (NoSuchAlgorithmException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				
+				uvo = usv.logIn(new UserVO(jsonObj.get("email").toString(), checkPwd));
+				out = res.getWriter();
 				if (uvo == null) {
 					out.print(0);
 				} else {
@@ -180,7 +273,16 @@ public class UserController extends HttpServlet {
 		case "modifyPwd":
 			// 비밀번호 수정
 			// 이후 로그아웃시키고 로그인페이지로
-			isUp = usv.modifyPwd(new UserVO(req.getParameter("email"), req.getParameter("newPwd"), true));
+			String newPwd = "";
+			try {
+				newPwd = hash.bytesToHex(hash.sha256(req.getParameter("newPwd")));
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			isUp = usv.modifyPwd(new UserVO(req.getParameter("email"), newPwd, true));
 			log.info(">>> pwd change > {}", isUp > 0 ? "Success" : "Fail");
 			res.sendRedirect("/userCtrl/logout");
 			/* req.getRequestDispatcher("/userCtrl/logout").forward(req, res); */
@@ -196,7 +298,7 @@ public class UserController extends HttpServlet {
 			uvo = new UserVO();
 			String oldAvatar = "";
 			try {
-				String savePath = getServletContext().getRealPath("/_fileUpload");
+				String savePath = getServletContext().getRealPath("/_fileUpload/avatar");
 				File fileDir = new File(savePath);
 
 				if (!fileDir.exists()) {
@@ -263,50 +365,46 @@ public class UserController extends HttpServlet {
 			break;
 		case "follow":
 			// 비동기방식
-			log.info("follow from : " + req.getParameter("from"));
-			log.info("follow to : " + req.getParameter("to"));
 			usv.follow(req.getParameter("from"), req.getParameter("to"));
 			req.getRequestDispatcher("/userCtrl/profile?email=" + req.getParameter("to")).forward(req, res);
 			break;
 		case "unfollow":
 			// 비동기방식
-			log.info("unfollow from : " + req.getParameter("from"));
-			log.info("unfollow to : " + req.getParameter("to"));
 			usv.unFollow(req.getParameter("from"), req.getParameter("to"));
 			req.getRequestDispatcher("/userCtrl/profile?email=" + req.getParameter("to")).forward(req, res);
 			break;
+		case "unfollowFromModal":
+			// 비동기방식
+			isUp = usv.unFollow(req.getParameter("from"), req.getParameter("to"));
+			out = res.getWriter();
+			out.print(isUp);
+			break;
 		case "checkEmail": // 수정 중
-			try {
-				StringBuffer sb = new StringBuffer();
-				String line = null;
-				BufferedReader br = req.getReader();
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-				log.info(">>> sb {}", sb.toString());
-				JSONParser parser = new JSONParser();
-				JSONObject jsonObj = (JSONObject) parser.parse(sb.toString());
-//				isUp = usv.checkEmail(jsonObj.get("email").toString());
-				PrintWriter out = res.getWriter();
-				if (isUp == 0) {
-					out.print(0);
-				} else {
-					out.print(1);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			isUp = usv.checkEmail(req.getParameter("email"));
+			out = res.getWriter();
+			out.print(isUp);
 			break;
 		case "login":
-			System.out.println("asfnsk");
-			uvo = usv.logIn(new UserVO(req.getParameter("email"), req.getParameter("pwd")));
+			String pwd = "";
+			try {
+				pwd = hash.bytesToHex(hash.sha256(req.getParameter("pwd")));
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			
+			uvo = usv.logIn(new UserVO(req.getParameter("email"), pwd));
 			if (uvo != null) {
 				HttpSession ses = req.getSession();
 				ses.setAttribute("ses", uvo);
+				if (req.getParameter("iska") != null) {
+					ses.setAttribute("isSocial", true);
+				}
 				ses.setMaxInactiveInterval(60 * 20);
 			} else {
-				req.setAttribute("msg_u_login", 0);
-				req.getRequestDispatcher("/").forward(req, res);
+				res.sendRedirect("/");
 				break;
 			}
 			req.getRequestDispatcher("/postCtrl/list").forward(req, res);
@@ -325,8 +423,14 @@ public class UserController extends HttpServlet {
 		case "remove":
 			// 회원정보 삭제
 			// 이후 로그아웃시키고 인덱스페이지로
+			usv.unfollowAll(req.getParameter("email"));
+			
+			isUp = psv.removeAll(req.getParameter("email"));
+			isUp = csv.removeAll(req.getParameter("email"));
+			isUp = lsv.removeAll(req.getParameter("email"));
 			isUp = usv.remove(req.getParameter("email"));
-			log.info(">>> Remove > {}", isUp > 0 ? "Success" : "Fail");
+			
+			log.info("1 :  {}", Integer.toString(isUp));
 			HttpSession currSES = req.getSession();
 			currSES.invalidate();
 			res.sendRedirect("/index.jsp");

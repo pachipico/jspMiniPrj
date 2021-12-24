@@ -14,4 +14,5 @@ public interface PostService {
 	public int getCnt(String query);
 	public int modify(PostVO pvo);
 	public int remove(long postId);
+	public int removeAll(String email);
 }

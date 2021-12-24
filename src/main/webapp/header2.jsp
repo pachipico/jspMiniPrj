@@ -38,11 +38,16 @@
 					<ul class="dropdown-menu">
 						<li><a class="dropdown-item" href="/userCtrl/profile?email=${ses.email }">프로필</a></li>
 						<li><a class="dropdown-item" href="/userCtrl/detail?email=${ses.email }">프로필 편집</a></li>
-						<li><a class="dropdown-item" href="#">추가가능</a></li>
+						<li><a class="dropdown-item" href="/userCtrl/changePwd?email=${ses.email }">비밀번호 변경</a></li>
+						<li><a class="dropdown-item" href="/userCtrl/changeAvatar?email=${ses.email }">프로필사진 변경</a></li>
+						<c:if test="${access_token ne null }">
+						<li><a class="dropdown-item" href="/userCtrl/kakaoUnlink?">카카오톡 연결끊기</a></li>
+						</c:if>
 						<li><hr class="dropdown-divider"></li>
 						<li><a class="dropdown-item" href="/userCtrl/logout">로그아웃</a></li>
 					</ul>
 				</div>
+
 
 			</section>
 		<script src="/js/nav.js"></script>

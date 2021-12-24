@@ -22,7 +22,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           	
           	</c:when>
           	<c:otherwise>
-			<img id="post_img" alt="" src="../_postImgUpload/${pvo.files }">          	
+			<img id="post_img" alt="" src="../_fileUpload/post/${pvo.files }">          	
           	</c:otherwise>
           	
           	</c:choose>
@@ -30,7 +30,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       <div class="right_container">
         <div class="writer">
           <div class="cmt_img">
-          	<img class="avatar" src="../_fileUpload/${empty pvo.avatar ? 'default_avatar.jpeg' : pvo.avatar }" alt="" />
+          	<img class="avatar" src="../_fileUpload/avatar/${empty pvo.avatar ? 'default_avatar.jpeg' : pvo.avatar }" alt="" />
           		
           </div>
           <div class="cmt_text">
@@ -70,7 +70,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
               <div class="cmt">
                 <div class="cmt_img">
                 	
-                  <img class="avatar" src="../_fileUpload/${empty cvo.avatar ? 'default_avatar.jpeg' : cvo.avatar }" alt="" />
+                  <img class="avatar" src="../_fileUpload/avatar/${empty cvo.avatar ? 'default_avatar.jpeg' : cvo.avatar }" alt="" />
                 </div>
                 <div class="cmt_text">
                   <div class="cmt_writer_area">

@@ -12,9 +12,10 @@ import repository.LikeDAOimple;
 public class LikeServiceImple implements LikeService {
 	private static final Logger log = LoggerFactory.getLogger(LikeServiceImple.class);
 	private LikeDAO ldao = new LikeDAOimple();
+
 	@Override
 	public int like(LikeVO lvo) {
-		
+
 		return ldao.insert(lvo);
 	}
 
@@ -23,7 +24,6 @@ public class LikeServiceImple implements LikeService {
 
 		return ldao.selectList(email);
 	}
-	
 
 	@Override
 	public int unLike(LikeVO lvo) {
@@ -33,7 +33,12 @@ public class LikeServiceImple implements LikeService {
 
 	@Override
 	public List<String> getLikedPostId(String email) {
-		
+
 		return ldao.selectLikedPostId(email);
+	}
+
+	@Override
+	public int removeAll(String email) {
+		return ldao.deleteAll(email);
 	}
 }

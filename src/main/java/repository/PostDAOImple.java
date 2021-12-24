@@ -161,4 +161,20 @@ public class PostDAOImple implements PostDAO {
 		return isUp;
 	}
 
+	@Override
+	public int deleteAll(String email) {
+		try {
+			SqlSession sql = DataBaseBuilder.getFactory().openSession();
+			int isUp = sql.delete(ns + "delAll", email);
+			if (isUp > 0) {
+				sql.commit();
+			}
+			sql.close();
+			return isUp;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
 }

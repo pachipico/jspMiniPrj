@@ -9,5 +9,5 @@ public interface LikeService {
 	public List<LikeVO> getList(String email);
 	public List<String> getLikedPostId(String email);
 	public int unLike(LikeVO lvo);
-	
+	public int removeAll(String email);
 }

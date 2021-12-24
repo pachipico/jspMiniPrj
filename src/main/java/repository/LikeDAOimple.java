@@ -11,15 +11,13 @@ import orm.DataBaseBuilder;
 
 public class LikeDAOimple implements LikeDAO {
 
-	
-
 	private static final Logger log = LoggerFactory.getLogger(LikeDAOimple.class);
 	private SqlSession sql;
 	private final String ns = "LikeMapper.";
 
 	public LikeDAOimple() {
 		new DataBaseBuilder();
-		
+
 	}
 
 	@Override
@@ -33,8 +31,6 @@ public class LikeDAOimple implements LikeDAO {
 		return isUp;
 	}
 
-
-	
 	@Override
 	public List<LikeVO> selectList(String email) {
 		sql = DataBaseBuilder.getFactory().openSession();
@@ -46,12 +42,12 @@ public class LikeDAOimple implements LikeDAO {
 	@Override
 	public List<String> selectLikedPostId(String email) {
 		sql = DataBaseBuilder.getFactory().openSession();
-		List<String> likedPostId = sql.selectList(ns+"likedPostId", email);
+		List<String> likedPostId = sql.selectList(ns + "likedPostId", email);
 		sql.close();
-		
+
 		return likedPostId;
 	}
-	
+
 	@Override
 	public int delete(LikeVO lvo) {
 		sql = DataBaseBuilder.getFactory().openSession();
@@ -61,5 +57,21 @@ public class LikeDAOimple implements LikeDAO {
 		}
 		sql.close();
 		return isUp;
+	}
+
+	@Override
+	public int deleteAll(String email) {
+		try {
+			SqlSession sql = DataBaseBuilder.getFactory().openSession();
+			int isUp = sql.delete(ns + "delAll", email);
+			if (isUp > 0) {
+				sql.commit();
+			}
+			sql.close();
+			return isUp;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }

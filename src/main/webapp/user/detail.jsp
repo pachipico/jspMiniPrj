@@ -10,17 +10,13 @@
 	<div class="form_container">
 		<div class="detail">
 			<div class="top">
-				<a href="/userCtrl/changePwd?email=${ses.email }"
-					class="profile_edit">비밀번호 변경</a> 
-				<a href="/userCtrl/changeAvatar?email=${ses.email }"
-					class="profile_edit">프로필사진 변경</a>
 			</div>
 		</div>
 		<div class="form">
 			<h1 class="sprite_insta_big_logo title"></h1>
 			<form action="/userCtrl/modify">
 				<p class="login_user_name">
-					<input type="hidden" name="email" value="${uvo.email }">
+					<input type="hidden" name="email" id="email" value="${uvo.email }">
 				</p>
 
 				<p class="login_user_password">
@@ -44,10 +40,11 @@
 				<input type="submit" value="제출" class="submit_btn">
 			</form>
 		</div>
+		<button type="button" class="btn btn-danger" id="del">계정삭제</button>
 	</div>
 </div>
 </section>
 
-
+<script src="../js/remove.js"></script>
 </body>
 </html>

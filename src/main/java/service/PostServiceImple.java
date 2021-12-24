@@ -11,8 +11,6 @@ import repository.PostDAOImple;
 
 public class PostServiceImple implements PostService {
 
-	
-
 	private static Logger log = LoggerFactory.getLogger(PostServiceImple.class);
 	private PostDAO pdao;
 
@@ -38,10 +36,10 @@ public class PostServiceImple implements PostService {
 
 	@Override
 	public List<PostVO> getLikeList(List<String> likedList) {
-		
+
 		return pdao.selectList(likedList);
 	}
-	
+
 	@Override
 	public int getCnt(String query) {
 
@@ -67,6 +65,11 @@ public class PostServiceImple implements PostService {
 	@Override
 	public int remove(long postId) {
 		return pdao.delete(postId);
+	}
+
+	@Override
+	public int removeAll(String email) {
+		return pdao.deleteAll(email);
 	}
 
 }

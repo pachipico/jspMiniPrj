@@ -9,4 +9,5 @@ public interface CommentService {
 	public List<CommentVO> getList(long postId);
 	public int modify(CommentVO cvo);
 	public int remove(long cmtId);
+	public int removeAll(String writer);
 }

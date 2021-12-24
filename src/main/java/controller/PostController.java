@@ -75,7 +75,7 @@ public class PostController extends HttpServlet {
 			// 게시물 업로드
 			// 이후 리스트 페이지로
 			try {
-				String savePath = getServletContext().getRealPath("/_postImgUpload");
+				String savePath = getServletContext().getRealPath("_fileUpload/post");
 				File fileDir = new File(savePath);
 
 				DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
@@ -149,7 +149,6 @@ public class PostController extends HttpServlet {
 
 			List<LikeVO> likeList = lsv.getList(uvo.getEmail());
 			List<UserVO> followingList = usv.getFollowingList(uvo.getEmail());// 세션 이메일 넣을것
-//			log.info("followingList = {}", followingList);
 			req.setAttribute("likeList", likeList);
 			req.setAttribute("cnt", psv.getCnt(query));
 			req.setAttribute("postList", postList);
@@ -158,7 +157,8 @@ public class PostController extends HttpServlet {
 				req.setAttribute("cmt" + pvo.getPostId(), csv.getList(pvo.getPostId()));
 			}
 			
-			log.info("list: {}", postList);
+//			log.info("followingList = {}", followingList);
+//			log.info("list: {}", postList);
 			log.info("page: {}", page);
 			log.info("count : {}", psv.getCnt(query));
 
@@ -253,7 +253,7 @@ public class PostController extends HttpServlet {
 			// 이후 내 게시물로 이동
 			PostVO pvo2 = new PostVO();
 			try {
-				String savePath = getServletContext().getRealPath("/_postImgUpload");
+				String savePath = getServletContext().getRealPath("/_fileUpload/post");
 				File fileDir = new File(savePath);
 				String prevFile = "";
 				DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();

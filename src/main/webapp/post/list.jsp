@@ -91,7 +91,7 @@
 							<div class="user_container">
 								<div class="profile_img">
 									<img class="avatar"
-										src="../_fileUpload/${empty post.avatar ? 'default_avatar.jpeg' : post.avatar }"
+										src="../_fileUpload/avatar/${empty post.avatar ? 'default_avatar.jpeg' : post.avatar }"
 										alt="" />
 								</div>
 								<div class="user_name">
@@ -139,7 +139,7 @@
 												<img src="../imgs/img_section/img01.jpg" alt="visual01">
 											</c:when>
 											<c:otherwise>
-												<img src="../_postImgUpload/${post.files}" alt="visual01">
+												<img src="../_fileUpload/post/${post.files}" alt="visual01">
 											</c:otherwise>
 										</c:choose>
 									</a>
@@ -205,7 +205,7 @@
 			</c:forEach>
 			<div class="page">
 		<c:forEach begin="1" end="${ Math.ceil(cnt / 5) }" varStatus="st">
-			<a href="/postCtrl/list?page=${st.count }">${st.count }</a>
+			<a href="/postCtrl/list?page=${st.count }&query=${param.query}">${st.count }</a>
 		</c:forEach>
 			</div>
 		</div>
@@ -288,7 +288,7 @@
 			<div class="user_profile">
 				<div class="profile_thumb">
 					<img
-						src="../_fileUpload/${empty ses.avatar ? 'default_avatar.jpeg'  : ses.avatar }"
+						src="../_fileUpload/avatar/${empty ses.avatar ? 'default_avatar.jpeg'  : ses.avatar }"
 						alt="프로필사진">
 				</div>
 				<div class="detail">
@@ -309,7 +309,7 @@
 						<div class="thumb_user" data-followuser="${following.email }">
 							<div class="profile_thumb">
 								<img
-									src="../_fileUpload/${empty following.avatar ? 'default_avatar.jpeg' : following.avatar }"
+									src="../_fileUpload/avatar/${empty following.avatar ? 'default_avatar.jpeg' : following.avatar }"
 									alt="프로필사진">
 							</div>
 							<div class="detail">
