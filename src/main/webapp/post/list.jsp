@@ -327,31 +327,7 @@
 				</div>
 			</article>
 
-			<article class="recommend">
-				<header class="reco_header">
-					<div>회원님을 위한 추천</div>
-					<div class="more">모두 보기</div>
-				</header>
-
-				<div class="thumb_user">
-					<div class="profile_thumb">
-						<img src="../imgs/thumb02.jpg" alt="프로필사진">
-					</div>
-					<div class="detail">
-						<div class="id">kind_tigerrrr</div>
-						<div class="time">1시간 전</div>
-					</div>
-				</div>
-				<div class="thumb_user">
-					<div class="profile_thumb">
-						<img src="../imgs/thumb02.jpg" alt="프로필사진">
-					</div>
-					<div class="detail">
-						<div class="id">kind_tigerrrr</div>
-						<div class="time">1시간 전</div>
-					</div>
-				</div>
-			</article>
+		
 		</div>
 	</div>
 </section>

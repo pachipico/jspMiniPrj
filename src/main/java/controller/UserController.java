@@ -29,6 +29,8 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mysql.cj.Session;
+
 import api.KakaoAPI;
 import api.pwdHash;
 import domain.CommentVO;
@@ -157,7 +159,7 @@ public class UserController extends HttpServlet {
 					req.getParameter("name"), loginPwd,
 					Boolean.parseBoolean(req.getParameter("isAdmin")), req.getParameter("nickName"), " ", " "));
 			log.info(">> register {}", isUp > 0 ? "Success" : "Fail");
-			req.getRequestDispatcher("/index.jsp").forward(req, res);
+			res.sendRedirect("/");
 			break;
 		case "list":
 			// 관리자용 유저관리 리스트
@@ -369,16 +371,20 @@ public class UserController extends HttpServlet {
 		case "follow":
 			// 비동기방식
 			usv.follow(req.getParameter("from"), req.getParameter("to"));
+			
+			req.getSession().setAttribute("followingList", usv.getFollowingList(req.getParameter("from")));
 			req.getRequestDispatcher("/userCtrl/profile?email=" + req.getParameter("to")).forward(req, res);
 			break;
 		case "unfollow":
 			// 비동기방식
 			usv.unFollow(req.getParameter("from"), req.getParameter("to"));
+			req.getSession().setAttribute("followingList", usv.getFollowingList(req.getParameter("from")));
 			req.getRequestDispatcher("/userCtrl/profile?email=" + req.getParameter("to")).forward(req, res);
 			break;
 		case "unfollowFromModal":
 			// 비동기방식
 			isUp = usv.unFollow(req.getParameter("from"), req.getParameter("to"));
+			
 			out = res.getWriter();
 			out.print(isUp);
 			break;

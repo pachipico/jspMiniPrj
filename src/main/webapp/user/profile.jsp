@@ -18,7 +18,7 @@
 							<img src="../_fileUpload/avatar/${uvo.avatar }">
 						</c:when>
 						<c:otherwise>
-							<img src="../imgs/thumb.jpeg">
+							<img src="../_fileUpload/default_avatar.jpeg">
 						</c:otherwise>
 					</c:choose>
 				</div>
@@ -57,7 +57,7 @@
 		</div>
 
 		<!-- 팔로워 모달 -->
-		<div class="modal" id="follower">
+		<div class="modal modalBtn" id="follower">
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
 
@@ -85,7 +85,7 @@
 							<!-- 삭제버튼 -->
 							<c:if test="${uvo.email eq ses.email }">
 							<div style="width:20%; float:right;">
-								<button type="button" data-set="${item }" class="btn btn-sm btn-outline-secondary" id="followerDel">삭제</button>
+								<button type="button" data-set="${item }" class="btn btn-sm btn-outline-secondary modalBtn" id="followerDel">삭제</button>
 							</div>
 							</c:if>
 							</div>
@@ -97,7 +97,7 @@
 		</div>
 
 		<!-- 팔로잉 모달 -->
-		<div class="modal" id="following">
+		<div class="modal modalBtn" id="following">
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
 
@@ -125,7 +125,7 @@
 							<!-- 삭제버튼 -->
 							<c:if test="${uvo.email eq ses.email }">
 							<div style="width:20%; float:right;">
-								<button type="button" data-set="${item }" class="btn btn-sm btn-outline-secondary" id="followingDel">삭제</button>
+								<button type="button" data-set="${item }" class="btn btn-sm btn-outline-secondary modalBtn" id="followingDel">삭제</button>
 							</div>
 							</c:if>
 							</div>
